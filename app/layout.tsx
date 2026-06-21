@@ -25,9 +25,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${lora.variable} ${inter.variable} h-full`}>
-     <body className="min-h-full flex flex-col bg-white text-[#231F1E] font-body">
+      <body className="min-h-full flex flex-col bg-white text-[#231F1E] font-body">
         <Navbar />
-        {children}
+        <div className="flex-1">{children}</div>
         <Footer />
       </body>
     </html>

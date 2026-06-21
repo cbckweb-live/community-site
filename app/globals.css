@@ -1,9 +1,11 @@
+@import "tailwindcss";
+
 :root {
-  --color-ink: #1C1B1A;
-  --color-ivory: #F7F3EA;
-  --color-terracotta: #A13D2B;
-  --color-ochre: #C99A3C;
-  --color-forest: #3C4A3D;
+  --color-ink: #1c1b1a;
+  --color-ivory: #f7f3ea;
+  --color-terracotta: #a13d2b;
+  --color-ochre: #c99a3c;
+  --color-forest: #3c4a3d;
 }
 
 .font-display {
