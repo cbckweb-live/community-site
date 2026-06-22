@@ -2,37 +2,27 @@ import { supabase } from "@/lib/supabase";
 import EventCard from "@/components/EventCard";
 import Link from "next/link";
 
-export default async function EventsPage() {
+export default async function EventsArchivePage() {
   const currentYear = new Date().getFullYear();
   const yearStart = `${currentYear}-01-01`;
-  const yearEnd = `${currentYear}-12-31`;
 
-  const { data: events, error } = await supabase
+  const { data: events } = await supabase
     .from("events")
     .select("*")
-    .gte("event_date", yearStart)
-    .lte("event_date", yearEnd)
-    .order("event_date", { ascending: true });
+    .lt("event_date", yearStart)
+    .order("event_date", { ascending: false });
 
   return (
     <main className="px-8 py-16 max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display text-3xl">{currentYear} Events Calendar</h1>
-        <Link
-          href="/events/archive"
-          className="text-sm text-[#6B1F2A] hover:underline"
-        >
-          View Past Years →
+        <h1 className="font-display text-3xl">Past Years</h1>
+        <Link href="/events" className="text-sm text-[#6B1F2A] hover:underline">
+          ← Back to This Year
         </Link>
       </div>
 
-      {error && (
-        <p className="text-red-600">Something went wrong loading events.</p>
-      )}
       {events && events.length === 0 && (
-        <p className="text-[#231F1E]/60">
-          No events added for {currentYear} yet.
-        </p>
+        <p className="text-[#231F1E]/60">No past events on record yet.</p>
       )}
 
       <div className="space-y-4">
@@ -42,7 +32,6 @@ export default async function EventsPage() {
             title={event.title}
             event_date={event.event_date}
             description={event.description}
-            image_url={event.image_url} 
           />
         ))}
       </div>

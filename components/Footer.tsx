@@ -57,8 +57,8 @@ export default function Footer() {
           <Link href="/office-bearers" className="hover:text-[#6B1F2A]">
             Office Bearers
           </Link>
-          <Link href="/methetes" className="hover:text-[#6B1F2A]">
-            Methetes
+          <Link href="/mathetes" className="hover:text-[#6B1F2A]">
+            Mathetes
           </Link>
           <Link href="/gallery" className="hover:text-[#6B1F2A]">
             Gallery
