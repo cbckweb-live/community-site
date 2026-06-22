@@ -12,13 +12,16 @@ const navigation = [
   { name: "Home", href: "/" },
   { name: "Gallery", href: "/gallery" },
   { name: "Events", href: "/events" },
-  { name: "Team", href: "/team" },
-  { name: "Members", href: "/members" },
+  { name: "Methetes", href: "/methetes" },
+  { name: "Office Bearers", href: "/office-bearers" },
 ];
 
 export default function Navbar() {
   return (
-    <Disclosure as="nav" className="relative bg-white border-b border-gray-200">
+    <Disclosure
+      as="nav"
+      className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative flex h-20 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -40,7 +43,7 @@ export default function Navbar() {
               href="/"
               className="font-display text-lg text-[#231F1E] shrink-0"
             >
-              Our Community
+              Youth Forum
             </Link>
 
             <div className="hidden sm:ml-12 sm:flex sm:gap-8">

@@ -4,9 +4,9 @@ import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 const images = [
-  "https://picsum.photos/1600/600?random=1",
-  "https://picsum.photos/1600/600?random=2",
-  "https://picsum.photos/1600/600?random=3",
+  "https://emsfthlfptmysgzpectv.supabase.co/storage/v1/object/public/media/Events/A7402285.jpg",
+  "https://emsfthlfptmysgzpectv.supabase.co/storage/v1/object/public/media/Events/DSCF5603.JPG",
+  "https://emsfthlfptmysgzpectv.supabase.co/storage/v1/object/public/media/Events/DSCF4958.JPG",
 ];
 
 export default function HeroSlider() {
@@ -16,7 +16,7 @@ export default function HeroSlider() {
   const next = () => setIndex((i) => (i + 1) % images.length);
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto h-[420px] rounded-md border border-gray-200 overflow-hidden">
+    <div className="relative w-full max-w-6xl mx-auto h-[420px] rounded-xl border border-white/40 bg-white/30 backdrop-blur-sm shadow-lg overflow-hidden p-1">
       <img
         src={images[index]}
         alt="Community highlight"

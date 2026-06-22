@@ -16,7 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Our Community",
+  title: "CBCK | Youth Forum",
   description: "News, events, and people of our community",
 };
 
