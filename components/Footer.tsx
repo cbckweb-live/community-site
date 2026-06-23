@@ -64,6 +64,9 @@ export default function Footer() {
           <Link href="/gallery" className="hover:text-[#6B1F2A]">
             Gallery
           </Link>
+          <Link href="/developers" className="hover:text-[#6B1F2A]">
+            Developers
+          </Link>
         </div>
       </div>
     </footer>
