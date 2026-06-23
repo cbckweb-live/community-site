@@ -39,7 +39,13 @@ export default function EventsSection() {
     setEvents((data as Event[]) || []);
   }, [supabase]);
 
-  useEffect(() => { fetchEvents(); }, [fetchEvents]);
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      void fetchEvents();
+    }, 0);
+
+    return () => window.clearTimeout(id);
+  }, [fetchEvents]);
 
   async function uploadImage(file: File): Promise<string> {
     setUploadProgress(10);

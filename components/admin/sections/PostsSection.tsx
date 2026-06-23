@@ -52,7 +52,13 @@ export default function PostsSection() {
     setPosts((data as Post[]) || []);
   }, [supabase]);
 
-  useEffect(() => { fetchPosts(); }, [fetchPosts]);
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      void fetchPosts();
+    }, 0);
+
+    return () => window.clearTimeout(id);
+  }, [fetchPosts]);
 
   async function uploadMedia(file: File, type: "photo" | "pdf"): Promise<string> {
     const bucket = type === "photo" ? "posts-media" : "posts-pdf";

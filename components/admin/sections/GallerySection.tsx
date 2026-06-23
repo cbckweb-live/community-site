@@ -85,22 +85,41 @@ export default function GallerySection() {
       });
 
       const responseText = await response.text();
-      let result: any;
+      let result: unknown;
       try {
         result = responseText ? JSON.parse(responseText) : {};
       } catch {
         result = { error: responseText };
       }
 
+      const errorFromApi = (() => {
+        if (typeof result !== "object" || result === null) return undefined;
+        const maybe = result as Record<string, unknown>;
+        const err = maybe["error"];
+        return typeof err === "string" ? err : undefined;
+      })();
+
+      const insertedRows = (() => {
+        if (typeof result !== "object" || result === null) return undefined;
+        const maybe = result as Record<string, unknown>;
+        const rows = maybe["insertedRows"];
+        return Array.isArray(rows) ? rows : undefined;
+      })();
+
       if (!response.ok) {
         throw new Error(
-          result?.error || responseText || "Failed to save gallery rows.",
+          errorFromApi || responseText || "Failed to save gallery rows.",
         );
       }
 
-      setDebugInfo(
-        `Inserted ${result.insertedRows?.length ?? 0} rows. Latest id: ${result.insertedRows?.[0]?.id ?? "none"}`,
-      );
+      const latestId = (() => {
+        if (!insertedRows?.length) return "none";
+        const first = insertedRows[0] as Record<string, unknown>;
+        const id = first?.["id"];
+        return typeof id === "string" || typeof id === "number" ? String(id) : "none";
+      })();
+
+      setDebugInfo(`Inserted ${insertedRows?.length ?? 0} rows. Latest id: ${latestId}`);
       setFiles(null);
       setCaption("");
       setEventTag("");

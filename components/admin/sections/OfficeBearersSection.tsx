@@ -66,7 +66,12 @@ export default function OfficeBearersSection() {
   }, [supabase]);
 
   useEffect(() => {
-    void fetchData();
+    // Avoid calling setState synchronously in an effect body; schedule after paint.
+    const id = window.setTimeout(() => {
+      void fetchData();
+    }, 0);
+
+    return () => window.clearTimeout(id);
   }, [fetchData]);
 
   async function uploadPhoto(file: File): Promise<string> {
@@ -103,16 +108,25 @@ export default function OfficeBearersSection() {
       });
 
       const responseText = await response.text();
-      let result: any;
+      let result: unknown;
       try {
         result = responseText ? JSON.parse(responseText) : {};
       } catch {
         result = { error: responseText };
       }
 
+      const errorFromApi = (() => {
+        if (typeof result !== "object" || result === null) return undefined;
+        const maybe = result as Record<string, unknown>;
+        const err = maybe["error"];
+        return typeof err === "string" ? err : undefined;
+      })();
+
+
+
       if (!response.ok) {
         throw new Error(
-          result?.error || responseText || "Failed to save person.",
+          errorFromApi || responseText || "Failed to save person.",
         );
       }
 
@@ -192,7 +206,7 @@ export default function OfficeBearersSection() {
         }),
       });
 
-      let result: any;
+      let result: unknown;
       try {
         result = await response.json();
       } catch {
@@ -200,8 +214,16 @@ export default function OfficeBearersSection() {
         throw new Error(text || "Failed to add team.");
       }
 
+      const errorFromApi =
+        typeof result === "object" &&
+        result !== null &&
+        "error" in result &&
+        typeof (result as Record<string, unknown>).error === "string"
+          ? (result as { error: string }).error
+          : undefined;
+
       if (!response.ok) {
-        throw new Error(result?.error || "Failed to add team.");
+        throw new Error(errorFromApi || "Failed to add team.");
       }
 
       setNewTeamName("");
