@@ -15,9 +15,9 @@ export default async function EventsPage() {
     .order("event_date", { ascending: true });
 
   return (
-    <main className="px-8 py-16 max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display text-3xl">{currentYear} Events Calendar</h1>
+    <main className="px-4 sm:px-8 py-12 sm:py-16 max-w-3xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
+        <h1 className="font-display text-2xl sm:text-3xl">{currentYear} Events Calendar</h1>
         <Link
           href="/events/archive"
           className="text-sm text-[#6B1F2A] hover:underline"

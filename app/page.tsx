@@ -16,11 +16,11 @@ export default async function HomePage() {
   <main className="bg-white text-[#231F1E]"></main>;
   return (
     <main className="bg-white text-[#231F1E]">
-      <section className="px-8 py-16 max-w-2xl mx-auto text-center">
+      <section className="px-4 sm:px-8 py-12 sm:py-16 max-w-2xl mx-auto text-center">
         <p className="text-sm uppercase tracking-widest text-[#6B1F2A] mb-3">
           Welcome
         </p>
-        <h1 className="font-display text-4xl leading-tight mb-4">
+        <h1 className="font-display text-2xl sm:text-4xl leading-tight mb-4">
           A community rooted in faith, growing together for generations.
         </h1>
         <p className="text-[#231F1E]/80 leading-relaxed">
@@ -30,11 +30,11 @@ export default async function HomePage() {
         </p>
       </section>
 
-      <section className="px-8 pb-16">
+      <section className="px-4 sm:px-8 pb-12 sm:pb-16">
         <HeroSlider />
       </section>
 
-      <section className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto px-8 py-16">
+      <section className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto px-4 sm:px-8 py-12 sm:py-16">
         {[
           {
             title: "Journey",
@@ -73,7 +73,7 @@ export default async function HomePage() {
           </div>
         ))}
       </section>
-      <section className="px-8 py-16">
+      <section className="px-4 sm:px-8 py-12 sm:py-16">
         <h2 className="font-display text-2xl mb-6 text-center">
           Our Leadership
         </h2>

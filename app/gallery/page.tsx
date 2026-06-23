@@ -25,8 +25,8 @@ export default async function GalleryPage() {
   );
 
   return (
-    <main className="px-8 py-16 max-w-6xl mx-auto">
-      <h1 className="font-display text-3xl mb-10">Gallery</h1>
+    <main className="px-4 sm:px-8 py-12 sm:py-16 max-w-6xl mx-auto">
+      <h1 className="font-display text-2xl sm:text-3xl mb-8 sm:mb-10">Gallery</h1>
 
       {error && (
         <p className="text-red-600">

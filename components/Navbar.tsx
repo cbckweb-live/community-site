@@ -38,7 +38,7 @@ export default function Navbar() {
             </DisclosureButton>
           </div>
 
-          <div className="flex flex-1 items-center justify-between sm:justify-start">
+          <div className="flex flex-1 items-center justify-center sm:justify-start">
             <Link href="/" className="shrink-0">
               <img src="/logo.png" alt="Youth Forum" className="h-12 w-auto" />
             </Link>

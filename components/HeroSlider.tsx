@@ -16,7 +16,7 @@ export default function HeroSlider() {
   const next = () => setIndex((i) => (i + 1) % images.length);
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto h-[420px] rounded-xl border border-white/40 bg-white/30 backdrop-blur-sm shadow-lg overflow-hidden p-1">
+    <div className="relative w-full max-w-6xl mx-auto h-[220px] sm:h-[320px] md:h-[420px] rounded-xl border border-white/40 bg-white/30 backdrop-blur-sm shadow-lg overflow-hidden p-1">
       <img
         src={images[index]}
         alt="Community highlight"
