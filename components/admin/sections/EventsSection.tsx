@@ -35,10 +35,10 @@ export default function EventsSection() {
   useEffect(() => { fetchEvents(); }, [fetchEvents]);
 
   async function uploadImage(file: File): Promise<string> {
-    const path = `events/${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage.from("media").upload(path, file);
+    const path = `${Date.now()}-${file.name}`;
+    const { error } = await supabase.storage.from("events-media").upload(path, file);
     if (error) throw error;
-    return supabase.storage.from("media").getPublicUrl(path).data.publicUrl;
+    return supabase.storage.from("events-media").getPublicUrl(path).data.publicUrl;
   }
 
   async function handleSubmit(e: React.FormEvent) {

@@ -34,10 +34,10 @@ export default function GallerySection() {
     setError(null);
     try {
       const uploads = Array.from(files).map(async (file) => {
-        const path = `gallery/${Date.now()}-${file.name}`;
-        const { error: uploadError } = await supabase.storage.from("media").upload(path, file);
+        const path = `${Date.now()}-${file.name}`;
+        const { error: uploadError } = await supabase.storage.from("gallery-media").upload(path, file);
         if (uploadError) throw uploadError;
-        const { data } = supabase.storage.from("media").getPublicUrl(path);
+        const { data } = supabase.storage.from("gallery-media").getPublicUrl(path);
         return { photo_url: data.publicUrl, caption: caption || null, event_tag: eventTag || null };
       });
       const rows = await Promise.all(uploads);

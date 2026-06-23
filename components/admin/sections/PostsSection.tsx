@@ -50,8 +50,8 @@ export default function PostsSection() {
   useEffect(() => { fetchPosts(); }, [fetchPosts]);
 
   async function uploadMedia(file: File, type: "photo" | "pdf"): Promise<string> {
-    const bucket = type === "photo" ? "media" : "pdfs";
-    const path = `posts/${Date.now()}-${file.name}`;
+    const bucket = type === "photo" ? "posts-media" : "posts-pdfs";
+    const path = `${Date.now()}-${file.name}`;
     const { error } = await supabase.storage.from(bucket).upload(path, file);
     if (error) throw error;
     return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;

@@ -20,14 +20,13 @@ type Team = {
   display_order: number;
 };
 
-const emptyPerson = (): Omit<Person, "id"> => ({
+const emptyPerson = (): Omit<Person, "id" | "display_order"> => ({
   name: "",
   role: "",
   photo_url: null,
   phone: "",
   email: "",
   team_id: null,
-  display_order: 0,
 });
 
 export default function OfficeBearersSection() {
@@ -36,10 +35,13 @@ export default function OfficeBearersSection() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [form, setForm] = useState(emptyPerson());
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showTeamsModal, setShowTeamsModal] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [newTeamName, setNewTeamName] = useState("");
+  const [search, setSearch] = useState("");
 
   const fetchData = useCallback(async () => {
     const [{ data: peopleData }, { data: teamsData }] = await Promise.all([
@@ -53,10 +55,10 @@ export default function OfficeBearersSection() {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   async function uploadPhoto(file: File): Promise<string> {
-    const path = `office-bearers/${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage.from("media").upload(path, file);
+    const path = `${Date.now()}-${file.name}`;
+    const { error } = await supabase.storage.from("office-bearers-media").upload(path, file);
     if (error) throw error;
-    return supabase.storage.from("media").getPublicUrl(path).data.publicUrl;
+    return supabase.storage.from("office-bearers-media").getPublicUrl(path).data.publicUrl;
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -70,11 +72,12 @@ export default function OfficeBearersSection() {
       if (editingId) {
         await supabase.from("office_bearers").update(payload).eq("id", editingId);
       } else {
-        await supabase.from("office_bearers").insert(payload);
+        await supabase.from("office_bearers").insert({ ...payload, display_order: people.length });
       }
       setForm(emptyPerson());
       setEditingId(null);
       setPhotoFile(null);
+      setShowEditModal(false);
       fetchData();
     } catch {
       setError("Something went wrong. Please try again.");
@@ -85,8 +88,17 @@ export default function OfficeBearersSection() {
 
   function handleEdit(person: Person) {
     setEditingId(person.id);
-    setForm({ name: person.name, role: person.role, photo_url: person.photo_url, phone: person.phone, email: person.email, team_id: person.team_id, display_order: person.display_order });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setForm({ name: person.name, role: person.role, photo_url: person.photo_url, phone: person.phone, email: person.email, team_id: person.team_id });
+    setPhotoFile(null);
+    setShowEditModal(true);
+  }
+
+  function handleCloseModal() {
+    setForm(emptyPerson());
+    setEditingId(null);
+    setPhotoFile(null);
+    setError(null);
+    setShowEditModal(false);
   }
 
   async function handleDelete(id: string) {
@@ -111,44 +123,68 @@ export default function OfficeBearersSection() {
 
   const inputCls = "w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1F2A]";
 
+  const filtered = people.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    p.role?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const PersonForm = (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <input type="text" placeholder="Full name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required className={inputCls} />
+      <input type="text" placeholder="Role / Title" value={form.role || ""} onChange={(e) => setForm({ ...form, role: e.target.value })} className={inputCls} />
+      <input type="text" placeholder="Phone (optional)" value={form.phone || ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputCls} />
+      <input type="email" placeholder="Email (optional)" value={form.email || ""} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputCls} />
+      <select value={form.team_id || ""} onChange={(e) => setForm({ ...form, team_id: e.target.value || null })} className={inputCls}>
+        <option value="">No team</option>
+        {teams.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
+      </select>
+      <div>
+        <p className="text-sm text-[#231F1E]/60 mb-2">Photo (optional)</p>
+        <input type="file" accept="image/*" onChange={(e) => setPhotoFile(e.target.files?.[0] || null)} className="text-sm" />
+        {form.photo_url && !photoFile && (
+          <img src={form.photo_url} alt="Current" className="mt-2 w-14 h-14 rounded-full object-cover" />
+        )}
+      </div>
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      <div className="flex gap-3 pt-1">
+        <button type="submit" disabled={saving} className="bg-[#6B1F2A] text-white rounded-lg px-6 py-2.5 text-sm font-medium hover:bg-[#7d2432] transition-colors disabled:opacity-60">
+          {saving ? "Saving..." : editingId ? "Update" : "Add Person"}
+        </button>
+        <button type="button" onClick={handleCloseModal} className="text-sm text-[#231F1E]/50 hover:underline">Cancel</button>
+      </div>
+    </form>
+  );
+
   return (
-    <div className="space-y-10">
-      {/* Person form */}
-      <form onSubmit={handleSubmit} className="space-y-5 bg-white shadow-md rounded-2xl p-6">
-        <h2 className="font-display text-lg">{editingId ? "Edit Person" : "Add Person"}</h2>
-        <input type="text" placeholder="Full name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required className={inputCls} />
-        <input type="text" placeholder="Role / Title" value={form.role || ""} onChange={(e) => setForm({ ...form, role: e.target.value })} className={inputCls} />
-        <input type="text" placeholder="Phone (optional)" value={form.phone || ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputCls} />
-        <input type="email" placeholder="Email (optional)" value={form.email || ""} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputCls} />
-        <input type="number" placeholder="Display order" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: Number(e.target.value) })} className={inputCls} />
-
-        <select value={form.team_id || ""} onChange={(e) => setForm({ ...form, team_id: e.target.value || null })} className={inputCls}>
-          <option value="">No team</option>
-          {teams.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
-        </select>
-
-        <div>
-          <p className="text-sm text-[#231F1E]/60 mb-2">Photo (optional)</p>
-          <input type="file" accept="image/*" onChange={(e) => setPhotoFile(e.target.files?.[0] || null)} className="text-sm" />
-          {form.photo_url && !photoFile && (
-            <img src={form.photo_url} alt="Current" className="mt-2 w-14 h-14 rounded-full object-cover" />
-          )}
-        </div>
-
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <div className="flex gap-3">
-          <button type="submit" disabled={saving} className="bg-[#6B1F2A] text-white rounded-lg px-6 py-2.5 text-sm font-medium hover:bg-[#7d2432] transition-colors disabled:opacity-60">
-            {saving ? "Saving..." : editingId ? "Update" : "Add Person"}
+    <div className="space-y-6">
+      {/* Top bar */}
+      <div className="flex flex-wrap gap-3 items-center justify-between">
+        <input
+          type="text"
+          placeholder="Search by name or role..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border border-gray-300 rounded-full px-5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1F2A] flex-1 min-w-[200px]"
+        />
+        <div className="flex gap-2">
+          <button
+            onClick={() => { setEditingId(null); setForm(emptyPerson()); setShowEditModal(true); }}
+            className="bg-[#6B1F2A] text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-[#7d2432] transition-colors"
+          >
+            + Add Person
           </button>
-          {editingId && (
-            <button type="button" onClick={() => { setForm(emptyPerson()); setEditingId(null); setPhotoFile(null); }} className="text-sm text-[#231F1E]/50 hover:underline">Cancel</button>
-          )}
+          <button
+            onClick={() => setShowTeamsModal(true)}
+            className="border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
+          >
+            Manage Teams
+          </button>
         </div>
-      </form>
+      </div>
 
       {/* People list */}
       <div className="space-y-3">
-        {people.map((person) => (
+        {filtered.map((person) => (
           <div key={person.id} className="bg-white shadow-sm rounded-xl px-5 py-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               {person.photo_url ? (
@@ -158,7 +194,10 @@ export default function OfficeBearersSection() {
               )}
               <div>
                 <p className="font-medium text-sm">{person.name}</p>
-                <p className="text-xs text-[#231F1E]/50">{person.role || "—"} · {teams.find(t => t.id === person.team_id)?.name || "No team"}</p>
+                <p className="text-xs text-[#231F1E]/50">
+                  {person.role || "—"}
+                  {person.team_id && ` · ${teams.find(t => t.id === person.team_id)?.name}`}
+                </p>
               </div>
             </div>
             <div className="flex gap-3 text-sm">
@@ -167,26 +206,43 @@ export default function OfficeBearersSection() {
             </div>
           </div>
         ))}
-        {people.length === 0 && <p className="text-sm text-[#231F1E]/50">No people added yet.</p>}
+        {filtered.length === 0 && <p className="text-sm text-[#231F1E]/50">No results.</p>}
       </div>
 
-      {/* Teams */}
-      <div className="bg-white shadow-md rounded-2xl p-6">
-        <h2 className="font-display text-lg mb-4">Teams</h2>
-        <form onSubmit={handleAddTeam} className="flex gap-3 mb-4">
-          <input type="text" placeholder="New team name" value={newTeamName} onChange={(e) => setNewTeamName(e.target.value)} className={`${inputCls} flex-1`} />
-          <button type="submit" className="bg-[#6B1F2A] text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-[#7d2432] transition-colors">Add</button>
-        </form>
-        <div className="space-y-2">
-          {teams.map((team) => (
-            <div key={team.id} className="flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50">
-              <p className="text-sm">{team.name}</p>
-              <button onClick={() => handleDeleteTeam(team.id)} className="text-red-500 text-sm hover:underline">Delete</button>
-            </div>
-          ))}
-          {teams.length === 0 && <p className="text-sm text-[#231F1E]/50">No teams yet.</p>}
+      {/* Edit / Add Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+            <h2 className="font-display text-lg mb-5">{editingId ? "Edit Person" : "Add Person"}</h2>
+            {PersonForm}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Teams Modal */}
+      {showTeamsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-display text-lg">Manage Teams</h2>
+              <button onClick={() => setShowTeamsModal(false)} className="text-sm text-[#231F1E]/50 hover:underline">Close</button>
+            </div>
+            <form onSubmit={handleAddTeam} className="flex gap-2 mb-4">
+              <input type="text" placeholder="New team name" value={newTeamName} onChange={(e) => setNewTeamName(e.target.value)} className={`${inputCls} flex-1`} />
+              <button type="submit" className="bg-[#6B1F2A] text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-[#7d2432] transition-colors">Add</button>
+            </form>
+            <div className="space-y-2">
+              {teams.map((team) => (
+                <div key={team.id} className="flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50">
+                  <p className="text-sm">{team.name}</p>
+                  <button onClick={() => handleDeleteTeam(team.id)} className="text-red-500 text-sm hover:underline">Delete</button>
+                </div>
+              ))}
+              {teams.length === 0 && <p className="text-sm text-[#231F1E]/50">No teams yet.</p>}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
