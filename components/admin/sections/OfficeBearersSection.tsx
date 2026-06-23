@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
+import FileUploadInput from "@/components/admin/FileUploadInput";
 
 type Person = {
   id: string;
@@ -38,6 +39,7 @@ export default function OfficeBearersSection() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showTeamsModal, setShowTeamsModal] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [newTeamName, setNewTeamName] = useState("");
@@ -56,8 +58,10 @@ export default function OfficeBearersSection() {
 
   async function uploadPhoto(file: File): Promise<string> {
     const path = `${Date.now()}-${file.name}`;
+    setUploadProgress(10);
     const { error } = await supabase.storage.from("office-bearers-media").upload(path, file);
     if (error) throw error;
+    setUploadProgress(100);
     return supabase.storage.from("office-bearers-media").getPublicUrl(path).data.publicUrl;
   }
 
@@ -65,6 +69,7 @@ export default function OfficeBearersSection() {
     e.preventDefault();
     setSaving(true);
     setError(null);
+    setUploadProgress(null);
     try {
       let photo_url = form.photo_url;
       if (photoFile) photo_url = await uploadPhoto(photoFile);
@@ -77,6 +82,7 @@ export default function OfficeBearersSection() {
       setForm(emptyPerson());
       setEditingId(null);
       setPhotoFile(null);
+      setUploadProgress(null);
       setShowEditModal(false);
       fetchData();
     } catch {
@@ -90,6 +96,7 @@ export default function OfficeBearersSection() {
     setEditingId(person.id);
     setForm({ name: person.name, role: person.role, photo_url: person.photo_url, phone: person.phone, email: person.email, team_id: person.team_id });
     setPhotoFile(null);
+    setUploadProgress(null);
     setShowEditModal(true);
   }
 
@@ -97,6 +104,7 @@ export default function OfficeBearersSection() {
     setForm(emptyPerson());
     setEditingId(null);
     setPhotoFile(null);
+    setUploadProgress(null);
     setError(null);
     setShowEditModal(false);
   }
@@ -138,13 +146,14 @@ export default function OfficeBearersSection() {
         <option value="">No team</option>
         {teams.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
       </select>
-      <div>
-        <p className="text-sm text-[#231F1E]/60 mb-2">Photo (optional)</p>
-        <input type="file" accept="image/*" onChange={(e) => setPhotoFile(e.target.files?.[0] || null)} className="text-sm" />
-        {form.photo_url && !photoFile && (
-          <img src={form.photo_url} alt="Current" className="mt-2 w-14 h-14 rounded-full object-cover" />
-        )}
-      </div>
+      <FileUploadInput
+        accept="image/*"
+        label="Upload photo (optional)"
+        file={photoFile}
+        currentUrl={form.photo_url}
+        progress={uploadProgress}
+        onChange={(files) => setPhotoFile(files?.[0] || null)}
+      />
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3 pt-1">
         <button type="submit" disabled={saving} className="bg-[#6B1F2A] text-white rounded-lg px-6 py-2.5 text-sm font-medium hover:bg-[#7d2432] transition-colors disabled:opacity-60">

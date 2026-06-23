@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import RichTextEditor from "@/components/admin/RichTextEditor";
+import FileUploadInput from "@/components/admin/FileUploadInput";
 
 type Post = {
   id: string;
@@ -39,6 +40,7 @@ export default function PostsSection() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<"none" | "photo" | "pdf">("none");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,8 +54,10 @@ export default function PostsSection() {
   async function uploadMedia(file: File, type: "photo" | "pdf"): Promise<string> {
     const bucket = type === "photo" ? "posts-media" : "posts-pdfs";
     const path = `${Date.now()}-${file.name}`;
+    setUploadProgress(10);
     const { error } = await supabase.storage.from(bucket).upload(path, file);
     if (error) throw error;
+    setUploadProgress(100);
     return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
   }
 
@@ -61,6 +65,7 @@ export default function PostsSection() {
     e.preventDefault();
     setSaving(true);
     setError(null);
+    setUploadProgress(null);
     try {
       let photo_url = form.photo_url;
       let pdf_url = form.pdf_url;
@@ -76,6 +81,7 @@ export default function PostsSection() {
       setEditingId(null);
       setMediaType("none");
       setMediaFile(null);
+      setUploadProgress(null);
       fetchPosts();
     } catch {
       setError("Something went wrong. Please try again.");
@@ -131,7 +137,14 @@ export default function PostsSection() {
             ))}
           </div>
           {mediaType !== "none" && (
-            <input type="file" accept={mediaType === "photo" ? "image/*" : "application/pdf"} onChange={(e) => setMediaFile(e.target.files?.[0] || null)} className="text-sm" />
+            <FileUploadInput
+              accept={mediaType === "photo" ? "image/*" : "application/pdf"}
+              label={`Upload ${mediaType}`}
+              file={mediaFile}
+              currentUrl={mediaType === "photo" ? form.photo_url : form.pdf_url}
+              progress={uploadProgress}
+              onChange={(files) => setMediaFile(files?.[0] || null)}
+            />
           )}
         </div>
         <label className="flex items-center gap-2 text-sm">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
+import FileUploadInput from "@/components/admin/FileUploadInput";
 
 type Photo = {
   id: string;
@@ -17,6 +18,7 @@ export default function GallerySection() {
   const [files, setFiles] = useState<FileList | null>(null);
   const [caption, setCaption] = useState("");
   const [eventTag, setEventTag] = useState("");
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,12 +34,17 @@ export default function GallerySection() {
     if (!files || files.length === 0) return;
     setSaving(true);
     setError(null);
+    setUploadProgress(0);
     try {
+      const total = files.length;
+      let done = 0;
       const uploads = Array.from(files).map(async (file) => {
         const path = `${Date.now()}-${file.name}`;
         const { error: uploadError } = await supabase.storage.from("gallery-media").upload(path, file);
         if (uploadError) throw uploadError;
         const { data } = supabase.storage.from("gallery-media").getPublicUrl(path);
+        done++;
+        setUploadProgress(Math.round((done / total) * 100));
         return { photo_url: data.publicUrl, caption: caption || null, event_tag: eventTag || null };
       });
       const rows = await Promise.all(uploads);
@@ -45,7 +52,7 @@ export default function GallerySection() {
       setFiles(null);
       setCaption("");
       setEventTag("");
-      (e.target as HTMLFormElement).reset();
+      setUploadProgress(null);
       fetchPhotos();
     } catch {
       setError("Upload failed. Please try again.");
@@ -66,10 +73,14 @@ export default function GallerySection() {
     <div>
       <form onSubmit={handleUpload} className="space-y-5 mb-10 bg-white shadow-md rounded-2xl p-6">
         <h2 className="font-display text-lg">Upload Photos</h2>
-        <div>
-          <p className="text-sm text-[#231F1E]/60 mb-2">Select one or more photos</p>
-          <input type="file" accept="image/*" multiple onChange={(e) => setFiles(e.target.files)} required className="text-sm" />
-        </div>
+        <FileUploadInput
+          accept="image/*"
+          label="Select one or more photos"
+          file={files?.[0] || null}
+          progress={uploadProgress}
+          multiple
+          onChange={(f) => setFiles(f)}
+        />
         <input type="text" placeholder="Caption (optional — applies to all)" value={caption} onChange={(e) => setCaption(e.target.value)} className={inputCls} />
         <input type="text" placeholder="Event tag (e.g. Annual Camp 2024)" value={eventTag} onChange={(e) => setEventTag(e.target.value)} className={inputCls} />
         {error && <p className="text-sm text-red-600">{error}</p>}
