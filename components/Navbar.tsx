@@ -39,11 +39,8 @@ export default function Navbar() {
           </div>
 
           <div className="flex flex-1 items-center justify-between sm:justify-start">
-            <Link
-              href="/"
-              className="font-display text-lg text-[#231F1E] shrink-0"
-            >
-              Youth Forum
+            <Link href="/" className="shrink-0">
+              <img src="/logo.png" alt="Youth Forum" className="h-12 w-auto" />
             </Link>
 
             <div className="hidden sm:ml-12 sm:flex sm:gap-8">

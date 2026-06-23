@@ -5,6 +5,7 @@ export default function Footer() {
     <footer className="bg-gray-100 text-gray-700 mt-auto border-t border-gray-200">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-10 px-8 py-14">
         <div>
+          <img src="/logo.png" alt="Youth Forum" className="h-12 w-auto mb-4" />
           <h3 className="font-display text-lg mb-4 text-[#231F1E]">
             Chakhesang Baptist Church, Youth Ministry
           </h3>

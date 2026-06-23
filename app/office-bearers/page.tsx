@@ -36,7 +36,7 @@ export default async function OfficeBearersPage() {
   const featured = peopleList.filter(
     (p) =>
       p.role?.toLowerCase().includes("pastor in charge") ||
-      p.role?.toLowerCase().includes("youth director")
+      p.role?.toLowerCase().includes("youth director"),
   );
 
   // Everyone else grouped by team
@@ -46,7 +46,6 @@ export default async function OfficeBearersPage() {
 
   return (
     <main className="px-8 py-16 max-w-5xl mx-auto">
-
       {/* Featured leaders — above the heading */}
       {featured.length > 0 && (
         <section className="mb-12">
@@ -58,7 +57,7 @@ export default async function OfficeBearersPage() {
         </section>
       )}
 
-      <h1 className="font-display text-3xl mb-10">Office Bearers</h1>
+      <h1 className="font-display text-center text-3xl mb-10">Office Bearers</h1>
 
       {standalone.length > 0 && (
         <section className="mb-12">
