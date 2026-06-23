@@ -66,7 +66,7 @@ export default function OfficeBearersSection() {
   }, [supabase]);
 
   useEffect(() => {
-    fetchData();
+    void fetchData();
   }, [fetchData]);
 
   async function uploadPhoto(file: File): Promise<string> {

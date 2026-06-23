@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import FileUploadInput from "@/components/admin/FileUploadInput";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
@@ -25,7 +25,7 @@ export default function GallerySection() {
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
-  async function fetchPhotos() {
+  const fetchPhotos = useCallback(async () => {
     const { data, error } = await supabase
       .from("gallery")
       .select("*")
@@ -37,7 +37,7 @@ export default function GallerySection() {
     }
     setError(null);
     setPhotos((data as Photo[]) || []);
-  }
+  }, [supabase]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -45,7 +45,7 @@ export default function GallerySection() {
     }, 0);
 
     return () => window.clearTimeout(timer);
-  }, [supabase]);
+  }, [fetchPhotos]);
 
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
