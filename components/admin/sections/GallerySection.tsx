@@ -76,13 +76,28 @@ export default function GallerySection() {
         };
       });
       const rows = await Promise.all(uploads);
-      const { data: insertedRows, error: insertError } = await supabase
-        .from("gallery")
-        .insert(rows)
-        .select();
-      if (insertError) throw new Error(insertError.message);
+      const response = await fetch("/api/admin/gallery", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ rows }),
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch {
+        const text = await response.text();
+        throw new Error(text || "Failed to save gallery rows.");
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.error || JSON.stringify(result) || "Failed to save gallery rows.");
+      }
+
       setDebugInfo(
-        `Inserted ${insertedRows?.length ?? 0} rows. Latest id: ${insertedRows?.[0]?.id ?? "none"}`,
+        `Inserted ${result.insertedRows?.length ?? 0} rows. Latest id: ${result.insertedRows?.[0]?.id ?? "none"}`,
       );
       setFiles(null);
       setCaption("");
@@ -100,7 +115,20 @@ export default function GallerySection() {
   }
 
   async function handleDelete(id: string) {
-    await supabase.from("gallery").delete().eq("id", id);
+    const response = await fetch("/api/admin/gallery", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      setError(`Delete failed: ${errorText}`);
+      return;
+    }
+
     setConfirmDeleteId(null);
     fetchPhotos();
   }
