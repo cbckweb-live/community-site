@@ -8,6 +8,7 @@ type Event = {
   id: string;
   title: string;
   event_date: string;
+  event_end_date: string | null;
   description: string | null;
   image_url: string | null;
 };
@@ -15,6 +16,7 @@ type Event = {
 const emptyEvent = (): Omit<Event, "id"> => ({
   title: "",
   event_date: "",
+  event_end_date: null,
   description: "",
   image_url: null,
 });
@@ -71,7 +73,7 @@ export default function EventsSection() {
 
   function handleEdit(event: Event) {
     setEditingId(event.id);
-    setForm({ title: event.title, event_date: event.event_date, description: event.description, image_url: event.image_url });
+    setForm({ title: event.title, event_date: event.event_date, event_end_date: event.event_end_date, description: event.description, image_url: event.image_url });
     setImageFile(null);
     setUploadProgress(null);
     setShowModal(true);
@@ -93,8 +95,8 @@ export default function EventsSection() {
   }
 
   const today = new Date().toISOString().split("T")[0];
-  const upcoming = events.filter((e) => e.event_date >= today);
-  const past = events.filter((e) => e.event_date < today);
+  const upcoming = events.filter((e) => (e.event_end_date ?? e.event_date) >= today);
+  const past = events.filter((e) => (e.event_end_date ?? e.event_date) < today);
 
   const inputCls = "w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1F2A]";
 
@@ -104,6 +106,9 @@ export default function EventsSection() {
         <p className="font-medium text-sm">{event.title}</p>
         <p className="text-xs text-[#231F1E]/50">
           {new Date(event.event_date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+          {event.event_end_date && event.event_end_date !== event.event_date && (
+            <> — {new Date(event.event_end_date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</>
+          )}
         </p>
       </div>
       <div className="flex gap-3 text-sm">
@@ -155,6 +160,10 @@ export default function EventsSection() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <input type="text" placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required className={inputCls} />
               <input type="date" value={form.event_date} onChange={(e) => setForm({ ...form, event_date: e.target.value })} required className={inputCls} />
+              <div>
+                <p className="text-xs text-[#231F1E]/50 mb-1">End date (optional — for multi-day events)</p>
+                <input type="date" value={form.event_end_date || ""} min={form.event_date} onChange={(e) => setForm({ ...form, event_end_date: e.target.value || null })} className={inputCls} />
+              </div>
               <textarea placeholder="Description (optional)" value={form.description || ""} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={4} className={inputCls} />
               <FileUploadInput
                 accept="image/*"

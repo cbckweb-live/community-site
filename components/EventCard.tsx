@@ -5,13 +5,15 @@ import { useState } from "react";
 interface EventCardProps {
   title: string;
   event_date: string;
-  description?: string;
-  image_url?: string;
+  event_end_date?: string | null;
+  description?: string | null;
+  image_url?: string | null;
 }
 
 export default function EventCard({
   title,
   event_date,
+  event_end_date,
   description,
   image_url,
 }: EventCardProps) {
@@ -23,11 +25,10 @@ export default function EventCard({
         {/* Text content */}
         <div className="flex-1 min-w-0 flex flex-col justify-center">
           <p className="text-xs uppercase tracking-widest text-[#6B1F2A] mb-2">
-            {new Date(event_date).toLocaleDateString("en-GB", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
+            {new Date(event_date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+            {event_end_date && event_end_date !== event_date && (
+              <> — {new Date(event_end_date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</>
+            )}
           </p>
           <h3 className="font-display text-2xl leading-snug mb-3">{title}</h3>
           {description && (

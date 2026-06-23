@@ -15,8 +15,8 @@ export default async function EventsPage() {
     .order("event_date", { ascending: true });
 
   const today = new Date().toISOString().split("T")[0];
-  const upcoming = events?.filter((e) => e.event_date >= today) || [];
-  const past = events?.filter((e) => e.event_date < today).reverse() || [];
+  const upcoming = events?.filter((e) => (e.event_end_date ?? e.event_date) >= today) || [];
+  const past = events?.filter((e) => (e.event_end_date ?? e.event_date) < today).reverse() || [];
 
   return (
     <main className="px-4 sm:px-8 py-12 sm:py-16 max-w-3xl mx-auto">
@@ -37,7 +37,7 @@ export default async function EventsPage() {
           <p className="text-xs uppercase tracking-widest text-[#6B1F2A] mb-4">Upcoming</p>
           <div className="space-y-4">
             {upcoming.map((event) => (
-              <EventCard key={event.id} title={event.title} event_date={event.event_date} description={event.description} image_url={event.image_url} />
+              <EventCard key={event.id} title={event.title} event_date={event.event_date} event_end_date={event.event_end_date} description={event.description} image_url={event.image_url} />
             ))}
           </div>
         </div>
@@ -48,7 +48,7 @@ export default async function EventsPage() {
           <p className="text-xs uppercase tracking-widest text-[#231F1E]/40 mb-4">Past Events</p>
           <div className="space-y-4">
             {past.map((event) => (
-              <EventCard key={event.id} title={event.title} event_date={event.event_date} description={event.description} image_url={event.image_url} />
+              <EventCard key={event.id} title={event.title} event_date={event.event_date} event_end_date={event.event_end_date} description={event.description} image_url={event.image_url} />
             ))}
           </div>
         </div>
