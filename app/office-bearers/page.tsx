@@ -1,6 +1,8 @@
 import { supabase } from "@/lib/supabase";
 import OfficeBearersClient from "@/components/OfficeBearersClient";
 
+export const revalidate = 0;
+
 type Person = {
   id: string;
   name: string;

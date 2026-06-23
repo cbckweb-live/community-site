@@ -1,5 +1,7 @@
 import { supabase } from "@/lib/supabase";
 
+export const revalidate = 0;
+
 type Photo = {
   id: string;
   photo_url: string;

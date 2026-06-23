@@ -2,6 +2,8 @@ import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 
+export const revalidate = 0;
+
 type Location = {
   id: string;
   name: string;
