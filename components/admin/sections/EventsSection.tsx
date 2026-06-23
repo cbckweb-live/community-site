@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import FileUploadInput from "@/components/admin/FileUploadInput";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 
 type Event = {
   id: string;
@@ -31,6 +32,7 @@ export default function EventsSection() {
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const fetchEvents = useCallback(async () => {
     const { data } = await supabase.from("events").select("*").order("event_date", { ascending: true });
@@ -89,8 +91,8 @@ export default function EventsSection() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this event?")) return;
     await supabase.from("events").delete().eq("id", id);
+    setConfirmDeleteId(null);
     fetchEvents();
   }
 
@@ -113,7 +115,7 @@ export default function EventsSection() {
       </div>
       <div className="flex gap-3 text-sm">
         <button onClick={() => handleEdit(event)} className="text-[#6B1F2A] hover:underline">Edit</button>
-        <button onClick={() => handleDelete(event.id)} className="text-red-500 hover:underline">Delete</button>
+        <button onClick={() => setConfirmDeleteId(event.id)} className="text-red-500 hover:underline">Delete</button>
       </div>
     </div>
   );
@@ -151,6 +153,14 @@ export default function EventsSection() {
       )}
 
       {events.length === 0 && <p className="text-sm text-[#231F1E]/50">No events yet.</p>}
+
+      {confirmDeleteId && (
+        <ConfirmDialog
+          message="Are you sure you want to delete this event?"
+          onConfirm={() => handleDelete(confirmDeleteId)}
+          onCancel={() => setConfirmDeleteId(null)}
+        />
+      )}
 
       {/* Modal */}
       {showModal && (

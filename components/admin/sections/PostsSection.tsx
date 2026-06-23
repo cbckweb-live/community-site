@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import FileUploadInput from "@/components/admin/FileUploadInput";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 
 type Post = {
   id: string;
@@ -44,6 +45,7 @@ export default function PostsSection() {
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const fetchPosts = useCallback(async () => {
     const { data } = await supabase.from("posts").select("*").order("created_at", { ascending: false });
@@ -108,8 +110,8 @@ export default function PostsSection() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this post?")) return;
     await supabase.from("posts").delete().eq("id", id);
+    setConfirmDeleteId(null);
     fetchPosts();
   }
 
@@ -143,12 +145,20 @@ export default function PostsSection() {
             <div className="flex gap-3 text-sm">
               <button onClick={() => togglePublish(post)} className={`${post.published ? "text-green-600" : "text-gray-400"} hover:underline`}>{post.published ? "Published" : "Draft"}</button>
               <button onClick={() => handleEdit(post)} className="text-[#6B1F2A] hover:underline">Edit</button>
-              <button onClick={() => handleDelete(post.id)} className="text-red-500 hover:underline">Delete</button>
+              <button onClick={() => setConfirmDeleteId(post.id)} className="text-red-500 hover:underline">Delete</button>
             </div>
           </div>
         ))}
         {posts.length === 0 && <p className="text-sm text-[#231F1E]/50">No posts yet.</p>}
       </div>
+
+      {confirmDeleteId && (
+        <ConfirmDialog
+          message="Are you sure you want to delete this post?"
+          onConfirm={() => handleDelete(confirmDeleteId)}
+          onCancel={() => setConfirmDeleteId(null)}
+        />
+      )}
 
       {/* Modal */}
       {showModal && (

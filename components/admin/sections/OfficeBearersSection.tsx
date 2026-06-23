@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import FileUploadInput from "@/components/admin/FileUploadInput";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 
 type Person = {
   id: string;
@@ -44,6 +45,8 @@ export default function OfficeBearersSection() {
   const [error, setError] = useState<string | null>(null);
   const [newTeamName, setNewTeamName] = useState("");
   const [search, setSearch] = useState("");
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [confirmDeleteTeamId, setConfirmDeleteTeamId] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     const [{ data: peopleData }, { data: teamsData }] = await Promise.all([
@@ -110,8 +113,8 @@ export default function OfficeBearersSection() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this person?")) return;
     await supabase.from("office_bearers").delete().eq("id", id);
+    setConfirmDeleteId(null);
     fetchData();
   }
 
@@ -124,8 +127,8 @@ export default function OfficeBearersSection() {
   }
 
   async function handleDeleteTeam(id: string) {
-    if (!confirm("Delete this team? Members will become unassigned.")) return;
     await supabase.from("teams").delete().eq("id", id);
+    setConfirmDeleteTeamId(null);
     fetchData();
   }
 
@@ -211,12 +214,28 @@ export default function OfficeBearersSection() {
             </div>
             <div className="flex gap-3 text-sm">
               <button onClick={() => handleEdit(person)} className="text-[#6B1F2A] hover:underline">Edit</button>
-              <button onClick={() => handleDelete(person.id)} className="text-red-500 hover:underline">Delete</button>
+              <button onClick={() => setConfirmDeleteId(person.id)} className="text-red-500 hover:underline">Delete</button>
             </div>
           </div>
         ))}
         {filtered.length === 0 && <p className="text-sm text-[#231F1E]/50">No results.</p>}
       </div>
+
+      {confirmDeleteId && (
+        <ConfirmDialog
+          message="Are you sure you want to delete this person?"
+          onConfirm={() => handleDelete(confirmDeleteId)}
+          onCancel={() => setConfirmDeleteId(null)}
+        />
+      )}
+
+      {confirmDeleteTeamId && (
+        <ConfirmDialog
+          message="Delete this team? Members will become unassigned."
+          onConfirm={() => handleDeleteTeam(confirmDeleteTeamId)}
+          onCancel={() => setConfirmDeleteTeamId(null)}
+        />
+      )}
 
       {/* Edit / Add Modal */}
       {showEditModal && (
@@ -244,7 +263,7 @@ export default function OfficeBearersSection() {
               {teams.map((team) => (
                 <div key={team.id} className="flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50">
                   <p className="text-sm">{team.name}</p>
-                  <button onClick={() => handleDeleteTeam(team.id)} className="text-red-500 text-sm hover:underline">Delete</button>
+                  <button onClick={() => setConfirmDeleteTeamId(team.id)} className="text-red-500 text-sm hover:underline">Delete</button>
                 </div>
               ))}
               {teams.length === 0 && <p className="text-sm text-[#231F1E]/50">No teams yet.</p>}
