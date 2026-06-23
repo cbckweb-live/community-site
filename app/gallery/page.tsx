@@ -34,12 +34,14 @@ export default async function GalleryPage() {
       .select("*")
       .order("created_at", { ascending: false });
     if (error) throw error;
-    photos = (data as Photo[] | null)
-      ?.map((photo) => ({
-        ...photo,
-        photo_url: cleanPhotoUrl(photo.photo_url),
-      }))
-      .filter((photo): photo is Photo => Boolean(photo.photo_url));
+    const fetchedPhotos = data as Photo[] | null | undefined;
+    photos =
+      fetchedPhotos
+        ?.map((photo) => ({
+          ...photo,
+          photo_url: cleanPhotoUrl(photo.photo_url),
+        }))
+        .filter((photo): photo is Photo => Boolean(photo.photo_url)) ?? [];
   } catch (err) {
     errorMessage = err instanceof Error ? err.message : String(err);
   }
