@@ -82,14 +82,14 @@ export default function Footer() {
               aria-label="YouTube"
               className="text-gray-500 hover:text-[#6B1F2A] transition-colors"
             >
-              {/* YouTube */}
+              {/* YouTube (no square/rounded-square look) */}
               <svg
                 viewBox="0 0 24 24"
                 className="h-8 w-8"
                 aria-hidden="true"
                 fill="currentColor"
               >
-                <path d="M10 15l5.2-3L10 9v6zm12-3c0-2.7-.3-4-1-5.4-.5-.9-1.3-1.7-2.2-2.2C17.4 3.3 16.1 3 13.4 3h-3.9C6.8 3 5.5 3.3 4.8 3.9c-.9.5-1.7 1.3-2.2 2.2C2 7.5 2 8.8 2 11.5v1c0 2.7 0 4  .6 5.4.5.9 1.3 1.7 2.2 2.2.7.6 2 .9 4.7.9h3.9c2.7 0 4-.3 4.7-.9.9-.5 1.7-1.3 2.2-2.2.6-1.4 1-2.7 1-5.4v-1z" />
+                <path d="M23.5 6.2a3.1 3.1 0 0 0-2.2-2.2C19.4 3.5 12 3.5 12 3.5s-7.4 0-9.3.5A3.1 3.1 0 0 0 .5 6.2 32.6 32.6 0 0 0 0 12a32.6 32.6 0 0 0 .5 5.8 3.1 3.1 0 0 0 2.2 2.2c1.9.5 9.3.5 9.3.5s7.4 0 9.3-.5a3.1 3.1 0 0 0 2.2-2.2A32.6 32.6 0 0 0 24 12a32.6 32.6 0 0 0-.5-5.8ZM9.6 15.4V8.6L15.6 12l-6 3.4Z" />
               </svg>
             </a>
           </div>
@@ -123,11 +123,27 @@ export default function Footer() {
             Nagaland, India
           </p>
 
+          <iframe
+            title="CBCK Youth Forum location map (pin code)"
+            className="mt-4 h-48 w-full rounded-lg border border-gray-200"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q=M4F6+XG5&output=embed"
+          ></iframe>
+
+          <iframe
+            title="CBCK Youth Forum location map (address)"
+            className="mt-4 h-48 w-full rounded-lg border border-gray-200"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q=Kitsubozou+Colony,+Kohima,+Nagaland,+India&output=embed"
+          ></iframe>
+
           <a
             href="https://www.google.com/maps?q=M4F6+XG5"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-[#6B1F2A] hover:underline"
+            className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-[#6B1F2A] hover:underline"
             aria-label="Open Google Map location"
           >
             <span aria-hidden="true">📍</span>
