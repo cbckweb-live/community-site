@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useState, useEffect, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import FileUploadInput from "@/components/admin/FileUploadInput";
@@ -351,7 +350,7 @@ export default function GallerySection() {
               )}
             </div>
 
-            <div className="absolute top-2 left-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute top-2 left-2 flex gap-2 opacity-100 transition-opacity">
               <button
                 onClick={() => {
                   setEditingId(photo.id);
