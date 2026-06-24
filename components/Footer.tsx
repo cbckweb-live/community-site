@@ -49,7 +49,7 @@ export default function Footer() {
               {/* Facebook (official-style) */}
               <svg
                 viewBox="0 0 24 24"
-                className="h-5 w-5"
+                className="h-7 w-7"
                 aria-hidden="true"
                 fill="currentColor"
               >
@@ -67,7 +67,7 @@ export default function Footer() {
               {/* Instagram */}
               <svg
                 viewBox="0 0 24 24"
-                className="h-5 w-5"
+                className="h-7 w-7"
                 aria-hidden="true"
                 fill="currentColor"
               >
