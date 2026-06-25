@@ -18,7 +18,7 @@ export default function Footer() {
         <div>
           <img src="/logo.png" alt="Youth Forum" className="h-12 w-auto mb-4" />
           <h3 className="font-display text-lg mb-4 text-[#231F1E]">
-            Chakhesang Baptist Church,
+            Chakhesang Baptist Church Kohima,
             Youth Ministry
           </h3>
         </div>
@@ -119,6 +119,8 @@ export default function Footer() {
             Chakhesang Baptist Church, Kitsubozou Colony, Kohima
             <br />
             Nagaland, India
+            <br />
+            797001
           </p>
         </div>
         <div>
