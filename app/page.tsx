@@ -60,6 +60,21 @@ function formatRange(startISO: string, endISO?: string | null) {
   return `${startStr} — ${endStr}`;
 }
 
+function CalendarDate({ date }: { date: string }) {
+  const d = new Date(date);
+  const day = d.getDate();
+  const month = d.toLocaleDateString("en-US", { month: "short" });
+
+  return (
+    <div className="flex flex-col items-center justify-center border border-[#231F1E]/10 rounded-xl shadow-sm bg-white w-16 h-16 flex-shrink-0">
+      <span className="text-[10px] uppercase tracking-wider text-[#6B1F2A] font-medium leading-none mb-0.5">
+        {month}
+      </span>
+      <span className="text-xl font-bold leading-none">{day}</span>
+    </div>
+  );
+}
+
 export default async function HomePage() {
   const { data: leadership } = await supabase
     .from("office_bearers")
@@ -71,16 +86,19 @@ export default async function HomePage() {
   const { data: upcomingEvents } = await supabase
     .from("events")
     .select("id,title,event_date,event_end_date,description,image_url")
-    .or(`event_end_date.gte.${today},event_end_date.is.null`)
+    .or(`event_end_date.gte.${today},event_end_date.is.null,event_end_date.eq.${today}`)
     .order("event_date", { ascending: true })
-    .limit(2);
+    .limit(20);
 
   const events = (upcomingEvents as Event[] | null) ?? [];
+
+  const upcoming = events
+    .filter((e) => (e.event_end_date ?? e.event_date) >= today)
+    .slice(0, 2);
 
   const { data: recentPosts } = await supabase
     .from("posts")
     .select("id,title,slug,category,content,created_at,photo_url")
-    .eq("published", true)
     .order("created_at", { ascending: false })
     .limit(3);
 
@@ -121,17 +139,18 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        {events.length === 0 ? (
+        {upcoming.length === 0 ? (
           <p className="text-[#231F1E]/60 text-center">No upcoming events.</p>
         ) : (
           <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {events.map((event) => (
+            {upcoming.map((event) => (
               <div
                 key={event.id}
                 className="flex flex-col sm:flex-row sm:items-stretch gap-6 border border-[#231F1E]/10 rounded-2xl p-6 shadow-md bg-white"
               >
+                <CalendarDate date={event.event_date} />
                 <div className="flex-1 min-w-0 flex flex-col justify-center">
-                  <p className="text-xs uppercase tracking-widest text-[#6B1F2A] mb-2">
+                  <p className="text-xs text-[#6B1F2A] mb-2">
                     {formatRange(
                       event.event_date,
                       event.event_end_date ?? event.event_date,
