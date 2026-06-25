@@ -1,4 +1,9 @@
-- [ ] Add 10MB PDF upload limit (client-side reject with user-friendly error)
-- [ ] Add 10MB PDF upload limit (server-side reject)
-- [x] Ensure PDFs larger than 10MB never reach Supabase storage
-- [ ] Quick sanity check: TypeScript build + lint (if available)
+# TODO
+
+- [x] Update `community-site/app/page.tsx` to add two new homepage sections after `HeroSlider`:
+  - [x] Upcoming Events (show exactly 2 upcoming events; include events spanning full month)
+  - [x] Recent Blog & News (show recent published posts; truncate content to a few lines and add “Read more” links)
+
+- [x] Run lint/build in `community-site/`
+- [ ] Verify homepage rendering (events date ranges, blog excerpt + links)
+
