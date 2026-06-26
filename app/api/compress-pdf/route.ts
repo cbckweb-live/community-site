@@ -17,10 +17,11 @@ export async function POST(request: NextRequest) {
       ignoreEncryption: true,
     });
 
+    // pdf-lib v1.17.x typings do not include `compressObjects`.
+    // Object stream usage typically provides most of the size benefit.
     const compressedBytes = await pdfDoc.save({
       useObjectStreams: true,
       addDefaultPage: false,
-      compressObjects: true,
     });
 
     const compressedBuffer = Buffer.from(compressedBytes);
