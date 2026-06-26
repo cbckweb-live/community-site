@@ -235,7 +235,7 @@ export default async function HomePage() {
         <h2 className="font-display text-2xl mb-6 text-center">
           Our Leadership
         </h2>
-        <div className="grid md:grid-cols-3 gap-6 max-w-2xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
           {leadership?.map((person) => (
             <LeadershipCard key={person.id} {...person} />
           ))}
