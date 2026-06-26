@@ -30,8 +30,12 @@ export default async function DevelopersPage() {
         {team.map((member) => (
           <div key={member.id} className="bg-white shadow-md rounded-2xl p-6 flex gap-4 items-start">
             {member.photo_url ? (
-              <Image                 src={member.photo_url}
+              <Image
+                src={member.photo_url}
                 alt={member.name}
+                width={56}
+                height={56}
+                quality={85}
                 className="w-14 h-14 rounded-full object-cover shrink-0"
               />
             ) : (

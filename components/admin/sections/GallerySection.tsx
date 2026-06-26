@@ -258,9 +258,12 @@ export default function GallerySection() {
             <h2 className="font-display text-lg mb-5">Edit Gallery Photo</h2>
             <div className="rounded-xl overflow-hidden border bg-gray-50 mb-4">
               <Image
-                src={editingPhoto?.photo_url}
+                src={editingPhoto!.photo_url}
                 alt={String(editingPhoto?.caption || "")}
-                className="w-full h-40 object-cover"
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                style={{ objectFit: "cover" }}
+                quality={85}
               />
             </div>
 
@@ -340,12 +343,15 @@ export default function GallerySection() {
         {photos.map((photo) => (
           <div
             key={photo.id}
-            className="relative group rounded-xl overflow-hidden bg-gray-100"
+            className="relative group rounded-xl overflow-hidden bg-gray-100 h-32"
           >
             <Image
               src={photo.photo_url}
               alt={String(photo.caption || "")}
-              className="w-full h-32 object-cover"
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              style={{ objectFit: "cover" }}
+              quality={85}
             />
             <div className="p-2">
               {photo.event_tag && (

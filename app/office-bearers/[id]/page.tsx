@@ -20,9 +20,12 @@ export default async function OfficeBearerDetailPage({
   return (
     <main className="px-8 py-16 max-w-2xl mx-auto text-center">
       {person.photo_url && (
-        <Image 
+        <Image
           src={person.photo_url}
           alt={person.name}
+          width={128}
+          height={128}
+          quality={85}
           className="w-32 h-32 rounded-full object-cover mx-auto mb-6"
         />
       )}

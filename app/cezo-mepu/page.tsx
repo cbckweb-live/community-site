@@ -71,9 +71,13 @@ export default async function CezoMepuPage() {
                 {/* Photo */}
                 <div className="relative w-full sm:w-52 h-40 rounded-xl overflow-hidden shrink-0">
                   {location.photo_url ? (
-                    <Image                       src={location.photo_url}
+                    <Image
+                      src={location.photo_url}
                       alt={location.name}
-                      className="w-full h-full object-cover"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      style={{ objectFit: "cover" }}
+                      quality={85}
                     />
                   ) : (
                     <div className="w-full h-full bg-[#231F1E]/05 flex flex-col items-center justify-center gap-2 text-[#231F1E]/30">
@@ -108,8 +112,12 @@ export default async function CezoMepuPage() {
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#6B1F2A] text-white text-sm font-medium hover:bg-[#7d2432] transition-colors"
                           >
                             {s.photo_url && (
-                              <Image                                 src={s.photo_url}
+                              <Image
+                                src={s.photo_url}
                                 alt={s.name}
+                                width={20}
+                                height={20}
+                                quality={85}
                                 className="w-5 h-5 rounded-full object-cover"
                               />
                             )}

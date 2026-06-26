@@ -8,7 +8,16 @@ type GalleryItemProps = {
 export default function GalleryItem({ photo_url, caption, event_tag }: GalleryItemProps) {
   return (
     <div className="group relative rounded-lg overflow-hidden bg-white/40 backdrop-blur-sm border border-white/50 shadow-md">
-      <Image src={photo_url} alt={caption || "Gallery photo"} className="w-full h-56 object-cover" />
+      <div className="relative h-56">
+        <Image
+          src={photo_url}
+          alt={caption || "Gallery photo"}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          style={{ objectFit: "cover" }}
+          quality={85}
+        />
+      </div>
       {(caption || event_tag) && (
         <div className="p-3">
           {event_tag && (

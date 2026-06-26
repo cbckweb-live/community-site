@@ -73,10 +73,16 @@ export default function FileUploadInput({ accept, label, file, files, currentUrl
       />
 
       {isImage && previewUrl && !multiple && (
-        <div className="relative mb-3">
-          <Image             src={previewUrl}
+        <div className="relative mb-3 h-40">
+          <Image
+            src={previewUrl}
             alt="Preview"
-            className="w-full max-h-40 object-cover rounded-lg"
+            fill
+            unoptimized={file !== null}
+            sizes="(max-width: 768px) 100vw, 33vw"
+            style={{ objectFit: "cover" }}
+            quality={85}
+            className="rounded-lg"
           />
           {file && (
             <button

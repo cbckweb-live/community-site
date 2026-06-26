@@ -13,11 +13,16 @@ export default function MathetesCard({
   return (
     <div className="rounded-xl overflow-hidden bg-white/40 backdrop-blur-sm border border-white/50 shadow-md">
       {photo_url && (
-        <Image 
-          src={photo_url}
-          alt={title}
-          className="w-full h-auto object-cover"
-        />
+        <div className="relative aspect-video">
+          <Image
+            src={photo_url}
+            alt={title}
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            style={{ objectFit: "cover" }}
+            quality={85}
+          />
+        </div>
       )}
       <div className="p-5">
         <h3 className="font-display text-lg mb-2">{title}</h3>

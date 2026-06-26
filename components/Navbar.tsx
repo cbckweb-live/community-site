@@ -60,7 +60,9 @@ export default function Navbar() {
 
           <div className="flex flex-1 items-center justify-center sm:justify-start">
             <Link href="/" className="shrink-0" onClick={() => setOpen(false)}>
-              <Image src="/logo.png" alt="Youth Forum" className="h-12 w-auto" />
+              <div className="relative h-12 w-32">
+                <Image src="/logo.png" alt="Youth Forum" fill style={{ objectFit: "contain" }} />
+              </div>
             </Link>
 
             <div className="hidden sm:ml-12 sm:flex sm:gap-8">

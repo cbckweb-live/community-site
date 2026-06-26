@@ -77,10 +77,16 @@ export default async function BlogNewsPage({
             className="group bg-white shadow-md rounded-2xl overflow-hidden hover:shadow-lg transition-shadow"
           >
             {post.photo_url && (
-              <Image                 src={post.photo_url}
-                alt={post.title}
-                className="w-full h-44 object-cover"
-              />
+              <div className="relative h-44">
+                <Image
+                  src={post.photo_url}
+                  alt={post.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  style={{ objectFit: "cover" }}
+                  quality={85}
+                />
+              </div>
             )}
             <div className="p-5">
               <p className="text-xs uppercase tracking-widest text-[#6B1F2A] mb-2">

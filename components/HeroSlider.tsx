@@ -14,7 +14,6 @@ export default function HeroSlider() {
   const [index, setIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
-  // Auto-advance every 3s.
   useEffect(() => {
     const id = window.setInterval(() => {
       setIndex((i) => (i + 1) % images.length);
@@ -36,7 +35,7 @@ export default function HeroSlider() {
     const endX = e.changedTouches[0]?.clientX;
     if (typeof endX !== "number") return;
     const deltaX = endX - startX;
-    const threshold = 45; // px
+    const threshold = 45;
     if (deltaX > threshold) prev();
     else if (deltaX < -threshold) next();
   };
@@ -47,10 +46,13 @@ export default function HeroSlider() {
       onTouchEnd={handleTouchEnd}
       className="relative w-full max-w-6xl mx-auto h-[220px] sm:h-[320px] md:h-[420px] rounded-xl border border-white/40 bg-white/30 backdrop-blur-sm shadow-lg overflow-hidden p-1 touch-pan-y"
     >
-      <Image 
+      <Image
         src={images[index]}
         alt="Community highlight"
-        className="w-full h-full object-cover"
+        fill
+        sizes="(max-width: 768px) 100vw, 33vw"
+        style={{ objectFit: "cover" }}
+        quality={85}
       />
 
       <button

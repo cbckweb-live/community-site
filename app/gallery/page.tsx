@@ -88,11 +88,16 @@ export default async function GalleryPage() {
                 key={photo.id}
                 className="rounded-lg overflow-hidden bg-white/40 backdrop-blur-sm border border-white/50 shadow-md"
               >
-                <Image 
-                  src={photo.photo_url}
-                  alt={photo.caption || tag}
-                  className="w-full h-56 object-cover"
-                />
+                <div className="relative h-56">
+                  <Image
+                    src={photo.photo_url}
+                    alt={photo.caption || tag}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    style={{ objectFit: "cover" }}
+                    quality={85}
+                  />
+                </div>
                 {photo.caption && (
                   <p className="text-sm text-[#231F1E]/80 p-3">
                     {photo.caption}

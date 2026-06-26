@@ -12,7 +12,9 @@ export default function Footer() {
     <footer className="bg-gray-100 text-gray-700 mt-auto border-t border-gray-200">
       <div className="grid grid-cols-1 md:grid-cols-5 gap-8 px-8 py-10">
         <div>
-          <Image src="/logo.png" alt="Youth Forum" className="h-12 w-auto mb-4" />
+          <div className="relative h-12 w-32 mb-4">
+            <Image src="/logo.png" alt="Youth Forum" fill style={{ objectFit: "contain" }} />
+          </div>
           <h3 className="font-display text-lg mb-4 text-[#231F1E]">
             Chakhesang Baptist Church, Kohima, Youth Ministry
           </h3>

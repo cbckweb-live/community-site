@@ -380,8 +380,12 @@ export default function OfficeBearersSection() {
           >
             <div className="flex items-center gap-3">
               {person.photo_url ? (
-                <Image                   src={person.photo_url}
+                <Image
+                  src={person.photo_url}
                   alt={person.name}
+                  width={36}
+                  height={36}
+                  quality={85}
                   className="w-9 h-9 rounded-full object-cover shrink-0"
                 />
               ) : (
