@@ -53,6 +53,10 @@ export default function EventCard({
               sizes="144px"
               style={{ objectFit: "cover" }}
               quality={100}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = "none";
+              }}
             />
           </button>
         )}
@@ -74,7 +78,7 @@ export default function EventCard({
             >
               Close ✕
             </button>
-            <div className="relative w-full max-h-[70vh]">
+            <div className="relative w-full aspect-video max-h-[75vh]">
               <Image
                 src={image_url}
                 alt={title}
