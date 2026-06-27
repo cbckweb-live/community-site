@@ -42,6 +42,7 @@ export default function EventCard({
         {/* Thumbnail on the right */}
         {image_url && (
           <button
+            type="button"
             onClick={() => setLightboxOpen(true)}
             className="flex-shrink-0 w-36 h-36 rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#6B1F2A]"
             aria-label="Enlarge image"
@@ -53,10 +54,6 @@ export default function EventCard({
               sizes="144px"
               style={{ objectFit: "cover" }}
               quality={100}
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = "none";
-              }}
             />
           </button>
         )}
@@ -78,7 +75,7 @@ export default function EventCard({
             >
               Close ✕
             </button>
-            <div className="relative w-full" style={{ height: "70vh", maxHeight: "400px" }}>
+            <div className="relative w-full h-[70vh] max-h-[400px]">
               <Image
                 src={image_url}
                 alt={title}
