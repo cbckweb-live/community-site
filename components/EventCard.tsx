@@ -61,16 +61,16 @@ export default function EventCard({
       {/* Lightbox */}
       {lightboxOpen && image_url && (
         <div
-          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
           onClick={() => setLightboxOpen(false)}
         >
           <div
-            className="relative max-w-3xl w-full max-h-[80vh]"
+            className="relative max-w-3xl w-full max-h-[90vh] flex flex-col items-center"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setLightboxOpen(false)}
-              className="absolute -top-10 right-0 text-white text-sm hover:underline"
+              className="absolute -top-10 right-0 text-white text-sm hover:underline z-10"
             >
               Close ✕
             </button>
