@@ -78,7 +78,7 @@ export default function EventCard({
             >
               Close ✕
             </button>
-            <div className="relative w-full aspect-video max-h-[75vh]">
+            <div className="relative w-full" style={{ height: "70vh", maxHeight: "400px" }}>
               <Image
                 src={image_url}
                 alt={title}
