@@ -28,8 +28,9 @@ export default async function DevelopersPage() {
 
 
   const adminDestination = session
-    ? "/developers/admin-dashboard"
+    ? "/admin/dashboard"
     : "/login";
+
 
   const { data } = await supabase
     .from("developers")
