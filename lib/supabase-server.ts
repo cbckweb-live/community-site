@@ -9,14 +9,16 @@ export async function createSupabaseServerClient() {
     process.env.SUPABASE_ANON_KEY!,
     {
       cookies: {
-        // Supabase SSR helper only needs cookie values to read the session.
-        // We do not mutate cookies from Server Components.
+        // Only read cookies from Server Components.
+        // Supabase may attempt to refresh tokens (writes cookies) during rendering.
+        // Next.js will crash if cookies are modified during layout/page render.
         getAll: () => cookieStore.getAll(),
         setAll: () => {
-          // No-op
+          // No-op: prevent cookie mutations during render.
         },
       },
     },
   );
+
 }
 

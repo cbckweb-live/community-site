@@ -1,7 +1,11 @@
-import { createSupabaseServerClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
+import { cookies } from "next/headers";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
+
+
+
 
 type Developer = {
   id: string;
@@ -13,11 +17,15 @@ type Developer = {
 };
 
 export default async function DevelopersPage() {
-  // Read auth session from the incoming request cookies (server-side)
+  // NOTE: Use our local Supabase SSR helper (lib/supabase-server.ts)
   const supabaseServer = await createSupabaseServerClient();
+
+
+
   const {
     data: { session },
   } = await supabaseServer.auth.getSession();
+
 
   const adminDestination = session
     ? "/developers/admin-dashboard"
