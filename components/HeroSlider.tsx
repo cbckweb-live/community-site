@@ -17,7 +17,7 @@ export default function HeroSlider() {
   useEffect(() => {
     const id = window.setInterval(() => {
       setIndex((i) => (i + 1) % images.length);
-    }, 3000);
+    }, 5000);
     return () => window.clearInterval(id);
   }, []);
 
