@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit -a -m \"Add delete image button to Office Bearers editing dialog\")",
+      "Bash(git push)"
+    ]
+  }
+}
