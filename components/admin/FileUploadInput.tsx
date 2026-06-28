@@ -13,9 +13,10 @@ type Props = {
   progress?: number | null;
   multiple?: boolean;
   onChange: (files: FileList | null) => void;
+  onRemove?: () => void;
 };
 
-export default function FileUploadInput({ accept, label, file, files, currentUrl, progress, multiple, onChange }: Props) {
+export default function FileUploadInput({ accept, label, file, files, currentUrl, progress, multiple, onChange, onRemove }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [cropFile, setCropFile] = useState<File | null>(null);
 
@@ -102,18 +103,32 @@ export default function FileUploadInput({ accept, label, file, files, currentUrl
             quality={75}
             className="rounded-lg"
           />
-          {file && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCropExisting();
-              }}
-              className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white text-xs px-2 py-1 rounded-md transition-colors"
-            >
-              Crop
-            </button>
-          )}
+          <div className="absolute top-2 right-2 flex gap-2">
+            {file && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCropExisting();
+                }}
+                className="bg-black/60 hover:bg-black/80 text-white text-xs px-2 py-1 rounded-md transition-colors"
+              >
+                Crop
+              </button>
+            )}
+            {onRemove && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove();
+                }}
+                className="bg-red-500/80 hover:bg-red-600 text-white text-xs px-2 py-1 rounded-md transition-colors"
+              >
+                Remove
+              </button>
+            )}
+          </div>
         </div>
       )}
 
@@ -137,7 +152,6 @@ export default function FileUploadInput({ accept, label, file, files, currentUrl
         </div>
       </div>
 
-      {/* Progress bar */}
       {progress !== null && progress !== undefined && progress > 0 && progress < 100 && (
         <div className="mt-3">
           <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">

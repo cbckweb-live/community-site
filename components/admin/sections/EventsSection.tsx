@@ -49,11 +49,51 @@ export default function EventsSection() {
 
   async function uploadImage(file: File): Promise<string> {
     setUploadProgress(10);
-    const path = `${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage.from("events-media").upload(path, file);
-    if (error) throw error;
+    const { compressImageFile } = await import("@/lib/compress");
+    let toUpload: File = file;
+    try {
+      toUpload = await compressImageFile(file, {
+        maxDimension: 1600,
+        quality: 0.78,
+        preferWebp: true,
+      });
+    } catch {
+      toUpload = file;
+    }
+    setUploadProgress(30);
+    const formData = new FormData();
+    formData.append("file", toUpload);
+    formData.append("type", "photo");
+    formData.append("bucket", "events-media");
+    const response = await fetch("/api/admin/media/upload", {
+      method: "POST",
+      body: formData,
+    });
+    const uploadText = await response.text();
+    let uploadResult: unknown;
+    try {
+      uploadResult = uploadText ? JSON.parse(uploadText) : {};
+    } catch {
+      uploadResult = { error: uploadText };
+    }
+    const errorFromApi = (() => {
+      if (typeof uploadResult !== "object" || uploadResult === null) return undefined;
+      const maybe = uploadResult as Record<string, unknown>;
+      const err = maybe["error"];
+      return typeof err === "string" ? err : undefined;
+    })();
+    if (!response.ok) {
+      throw new Error(errorFromApi || "Failed to upload image.");
+    }
+    const url = (() => {
+      if (typeof uploadResult !== "object" || uploadResult === null) return undefined;
+      const maybe = uploadResult as Record<string, unknown>;
+      const u = maybe["url"];
+      return typeof u === "string" ? u : undefined;
+    })();
+    if (!url) throw new Error("No URL returned from server.");
     setUploadProgress(100);
-    return supabase.storage.from("events-media").getPublicUrl(path).data.publicUrl;
+    return url;
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -63,17 +103,33 @@ export default function EventsSection() {
     setUploadProgress(null);
     try {
       let image_url = form.image_url;
-      if (imageFile) image_url = await uploadImage(imageFile);
+      if (imageFile) {
+        if (!imageFile.type.startsWith("image/")) {
+          throw new Error(`"${imageFile.name}" is not a valid image file.`);
+        }
+        if (imageFile.size > 20 * 1024 * 1024) {
+          throw new Error(`"${imageFile.name}" exceeds 20MB limit. Please select a smaller image.`);
+        }
+        image_url = await uploadImage(imageFile);
+      }
       const payload = { ...form, image_url };
-      if (editingId) {
-        await supabase.from("events").update(payload).eq("id", editingId);
-      } else {
-        await supabase.from("events").insert(payload);
+      const response = await fetch("/api/admin/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: editingId ? "update_event" : "create_event",
+          id: editingId,
+          ...payload,
+        }),
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || "Failed to save event.");
       }
       closeModal();
       await fetchEvents();
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Please try again.");
     } finally {
       setSaving(false);
     }
@@ -97,9 +153,22 @@ export default function EventsSection() {
   }
 
   async function handleDelete(id: string) {
-    await supabase.from("events").delete().eq("id", id);
-    setConfirmDeleteId(null);
-    fetchEvents();
+    try {
+      const response = await fetch("/api/admin/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete_event", id }),
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        setError(text || "Failed to delete event.");
+        return;
+      }
+      setConfirmDeleteId(null);
+      fetchEvents();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete event.");
+    }
   }
 
   const today = new Date().toISOString().split("T")[0];
@@ -128,7 +197,6 @@ export default function EventsSection() {
 
   return (
     <div className="space-y-6">
-      {/* Top bar */}
       <div className="flex justify-end">
         <button
           onClick={() => { setEditingId(null); setForm(emptyEvent()); setShowModal(true); }}
@@ -138,7 +206,6 @@ export default function EventsSection() {
         </button>
       </div>
 
-      {/* Upcoming */}
       <div>
         <h3 className="text-xs uppercase tracking-widest text-[#6B1F2A] mb-3">Upcoming</h3>
         <div className="space-y-3">
@@ -148,7 +215,6 @@ export default function EventsSection() {
         </div>
       </div>
 
-      {/* Past */}
       {past.length > 0 && (
         <div>
           <h3 className="text-xs uppercase tracking-widest text-[#231F1E]/40 mb-3">Past Events</h3>
@@ -168,7 +234,6 @@ export default function EventsSection() {
         />
       )}
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
@@ -188,6 +253,10 @@ export default function EventsSection() {
                 currentUrl={form.image_url}
                 progress={uploadProgress}
                 onChange={(files) => setImageFile(files?.[0] || null)}
+                onRemove={() => {
+                  setImageFile(null);
+                  setForm({ ...form, image_url: null });
+                }}
               />
               {error && <p className="text-sm text-red-600">{error}</p>}
               <div className="flex gap-3 pt-1">

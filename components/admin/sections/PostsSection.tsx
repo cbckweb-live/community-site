@@ -133,15 +133,23 @@ export default function PostsSection() {
       if (mediaFile && mediaType === "pdf")
         pdf_url = await uploadMedia(mediaFile, "pdf");
       const payload = { ...form, photo_url, pdf_url };
-      if (editingId) {
-        await supabase.from("posts").update(payload).eq("id", editingId);
-      } else {
-        await supabase.from("posts").insert(payload);
+      const response = await fetch("/api/admin/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: editingId ? "update_post" : "create_post",
+          id: editingId,
+          ...payload,
+        }),
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || "Failed to save post.");
       }
       closeModal();
       fetchPosts();
     } catch (err) {
-      setError(`Upload failed: ${err instanceof Error ? err.message : "Unknown error"}`);
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setSaving(false);
     }
@@ -176,17 +184,40 @@ export default function PostsSection() {
   }
 
   async function handleDelete(id: string) {
-    await supabase.from("posts").delete().eq("id", id);
-    setConfirmDeleteId(null);
-    fetchPosts();
+    try {
+      const response = await fetch("/api/admin/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete_post", id }),
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        setError(text || "Failed to delete post.");
+        return;
+      }
+      setConfirmDeleteId(null);
+      fetchPosts();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete post.");
+    }
   }
 
   async function togglePublish(post: Post) {
-    await supabase
-      .from("posts")
-      .update({ published: !post.published })
-      .eq("id", post.id);
-    fetchPosts();
+    try {
+      const response = await fetch("/api/admin/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "toggle_publish", id: post.id, published: !post.published }),
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        setError(text || "Failed to update publish status.");
+        return;
+      }
+      fetchPosts();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update publish status.");
+    }
   }
 
   const inputCls =
