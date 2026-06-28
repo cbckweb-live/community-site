@@ -116,3 +116,49 @@ export async function POST(request: NextRequest) {
   const url = serviceSupabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
   return jsonResponse({ url });
 }
+
+export async function DELETE(request: NextRequest) {
+  const response = NextResponse.next();
+  const auth = await requireAdmin(request, response);
+  if ("error" in auth) return auth.error;
+
+  let serviceSupabase;
+  try {
+    serviceSupabase = getServiceSupabase();
+  } catch {
+    return errorResponse("Supabase service role key is not configured.", 500);
+  }
+
+  const { url } = await request.json();
+
+  if (!url || typeof url !== "string") {
+    return errorResponse("URL is required.", 400);
+  }
+
+  // Extract the path from the URL (remove domain and bucket prefix)
+  try {
+    const urlObj = new URL(url);
+    const path = urlObj.pathname.split("/").slice(3).join("/"); // Remove /storage/v1/object/ prefix parts
+
+    if (!path) {
+      return errorResponse("Invalid URL format.", 400);
+    }
+
+    // Try to find the bucket from the path
+    const bucketMatch = path.match(/^([^/]+)\//);
+    const bucket = bucketMatch ? bucketMatch[1] : "posts-media";
+    const filePath = path.replace(/^[^/]+\//, "");
+
+    const { error } = await serviceSupabase.storage.from(bucket).remove([filePath]);
+
+    if (error) {
+      // Log but don't fail if file doesn't exist
+      console.error("Failed to delete file:", error);
+    }
+
+    return jsonResponse({ success: true });
+  } catch (err) {
+    console.error("Error deleting file:", err);
+    return errorResponse("Failed to delete file.", 500);
+  }
+}

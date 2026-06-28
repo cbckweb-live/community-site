@@ -226,6 +226,23 @@ export default function OfficeBearersSection() {
     }
   }
 
+  function handleRemovePhoto() {
+    // Extract path from URL to delete from storage
+    const photoUrl = form.photo_url;
+    if (photoUrl) {
+      // Clear the photo from form state immediately
+      setForm({ ...form, photo_url: null });
+      setPhotoFile(null);
+
+      // Delete from storage asynchronously
+      fetch("/api/admin/media/upload", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: photoUrl }),
+      }).catch(console.error);
+    }
+  }
+
   async function handleAddTeam(e: React.FormEvent) {
     e.preventDefault();
     if (!newTeamName.trim()) return;
@@ -356,6 +373,7 @@ export default function OfficeBearersSection() {
         currentUrl={form.photo_url}
         progress={uploadProgress}
         onChange={(files) => setPhotoFile(files?.[0] || null)}
+        onRemove={form.photo_url ? handleRemovePhoto : undefined}
       />
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3 pt-1">
