@@ -10,7 +10,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "emsfthlfptmysgzpectv.supabase.co",
-        pathname: "/storage/v1/object/public/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
       },
     ],
     qualities: [25, 50, 75, 85, 95, 100],

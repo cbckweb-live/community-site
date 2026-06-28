@@ -52,17 +52,23 @@ function formatRange(startISO: string, endISO?: string | null) {
   return `${startStr} — ${endStr}`;
 }
 
-function CalendarDate({ date }: { date: string }) {
-  const d = new Date(date);
-  const day = d.getDate();
-  const month = d.toLocaleDateString("en-US", { month: "short" });
+function CalendarDate({ startDate, endDate }: { startDate: string; endDate?: string | null }) {
+  const start = new Date(startDate);
+  const startDay = start.getDate();
+  const startMonth = start.toLocaleDateString("en-US", { month: "short" });
+
+  const isMultiday = endDate && endDate !== startDate;
+  const endDay = isMultiday ? new Date(endDate).getDate() : null;
 
   return (
     <div className="flex flex-col items-center justify-center border border-[#231F1E]/10 rounded-xl shadow-sm bg-white w-16 h-16 flex-shrink-0">
       <span className="text-[10px] uppercase tracking-wider text-[#6B1F2A] font-medium leading-none mb-0.5">
-        {month}
+        {startMonth}
       </span>
-      <span className="text-xl font-bold leading-none">{day}</span>
+      <span className="text-xl font-bold leading-none">
+        {startDay}
+        {isMultiday && <span className="text-xs">-{endDay}</span>}
+      </span>
     </div>
   );
 }
@@ -138,7 +144,7 @@ export default async function HomePage() {
                 key={event.id}
                 className="flex flex-col sm:flex-row sm:items-stretch gap-6 border border-[#231F1E]/10 rounded-2xl p-6 shadow-md bg-white"
               >
-                <CalendarDate date={event.event_date} />
+                <CalendarDate startDate={event.event_date} endDate={event.event_end_date} />
                 <div className="flex-1 min-w-0 flex flex-col justify-center">
                   <p className="text-xs text-[#6B1F2A] mb-2">
                     {formatRange(event.event_date, event.event_end_date ?? event.event_date)}
