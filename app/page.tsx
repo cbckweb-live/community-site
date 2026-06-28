@@ -67,7 +67,7 @@ function CalendarDate({ startDate, endDate }: { startDate: string; endDate?: str
       </span>
       <span className="text-xl font-bold leading-none">
         {startDay}
-        {isMultiday && <span className="text-xs">-{endDay}</span>}
+        {isMultiday && <>-{endDay}</>}
       </span>
     </div>
   );
