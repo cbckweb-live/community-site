@@ -44,7 +44,7 @@ export default function EventCard({
           <button
             type="button"
             onClick={() => setLightboxOpen(true)}
-            className="flex-shrink-0 w-36 h-36 rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#6B1F2A]"
+            className="flex-shrink-0 w-36 h-36 rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#6B1F2A] relative"
             aria-label="Enlarge image"
           >
             <Image
