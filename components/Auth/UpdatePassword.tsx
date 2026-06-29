@@ -22,17 +22,20 @@ export default function UpdatePassword({ redirectTo = "/dashboard" }: UpdatePass
     async function verifySession() {
       const supabase = createSupabaseBrowserClient();
 
+      setValidationError(null);
+
       const { data, error } = await supabase.auth.getSession();
 
-      const hashParams = new URLSearchParams(window.location.hash.slice(1));
-      const isInviteType = hashParams.get("type") === "invite" || hashParams.get("type") === "signup";
+      // If we don't yet have a session, try exchanging the auth code (e.g. invite/forgot-password flow).
+      if (!data.session && !error) {
+        const { data: codeData, error: exchangeError } =
+          await supabase.auth.exchangeCodeForSession();
 
-      if (isInviteType || (!data.session && !error)) {
-        const { data: exchangeData } = await supabase.auth.exchangeCodeForSession();
-        if (exchangeData?.session) {
-          if (!exchangeData.session.user.last_sign_in_at) {
-            setIsInvite(true);
-          }
+        if (codeData?.session && !exchangeError) {
+          const lastSignInAt = (codeData.session.user as { last_sign_in_at?: string | null })
+            ?.last_sign_in_at;
+          setIsInvite(!lastSignInAt);
+
           setStatus("idle");
           return;
         }
@@ -43,15 +46,17 @@ export default function UpdatePassword({ redirectTo = "/dashboard" }: UpdatePass
         return;
       }
 
-      if (!data.session.user.last_sign_in_at) {
-        setIsInvite(true);
-      }
+      const lastSignInAt = (data.session.user as { last_sign_in_at?: string | null })
+        ?.last_sign_in_at;
+      setIsInvite(!lastSignInAt);
+
 
       setStatus("idle");
     }
 
     verifySession();
   }, []);
+
 
   const headerText = useMemo(() => (isInvite ? "Welcome aboard!" : "Reset your password"), [isInvite]);
   const bodyText = useMemo(

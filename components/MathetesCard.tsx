@@ -1,4 +1,5 @@
 import Image from "next/image";
+
 type MathetesCardProps = {
   title: string;
   description: string | null;
@@ -13,16 +14,16 @@ export default function MathetesCard({
   return (
     <div className="rounded-xl overflow-hidden bg-white/40 backdrop-blur-sm border border-white/50 shadow-md">
       {photo_url && (
-        <div className="relative aspect-video">
-          <Image
-            src={photo_url}
-            alt={title}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-            style={{ objectFit: "cover" }}
-            quality={100}
-          />
-        </div>
+        <Image
+          src={photo_url}
+          alt={title}
+          width={800}
+          height={600}
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+          style={{ width: "100%", height: "auto" }}
+          quality={100}
+          className="block"
+        />
       )}
       <div className="p-5">
         <h3 className="font-display text-lg mb-2">{title}</h3>

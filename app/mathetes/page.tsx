@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import MathetesCard from "@/components/MathetesCard";
 import LeadershipCard from "@/components/LeadershipCard";
+
 export const revalidate = 0;
 
 export default async function MathetesPage() {
@@ -25,7 +26,15 @@ export default async function MathetesPage() {
 
   return (
     <main className="px-8 py-16 max-w-5xl mx-auto">
-      <h1 className="font-display text-3xl mb-4">Mathetes</h1>
+  <img
+    src="/mathetes logo.png"
+    alt="Mathetes Fellowship"
+    className="h-20 w-auto mx-auto mb-8"
+  />
+
+  <h1 className="font-display text-3xl mb-4 text-center">Mathetes</h1>
+  <h2 className="font-display text-xl mb-4 text-center">The way to Jesus</h2>
+  {/* ...rest stays the same */}
       <div className="text-[#231F1E]/80 leading-relaxed mb-10 max-w-2xl space-y-4">
         <p>
           The Mathetes Fellowship is a Youth Ministry initiative that bridges
