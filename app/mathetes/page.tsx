@@ -26,7 +26,7 @@ export default async function MathetesPage() {
 
   return (
     <main className="px-8 py-16 max-w-5xl mx-auto">
-      <imgage
+      <img
           src="/mathetes logo.png"
           alt="Mathetes Fellowship"
           className="mx-auto mb-8 h-auto w-full max-w-[240px] sm:max-w-[320px] md:max-w-[400px] lg:max-w-[480px]"
