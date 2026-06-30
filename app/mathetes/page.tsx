@@ -26,16 +26,16 @@ export default async function MathetesPage() {
 
   return (
     <main className="px-8 py-16 max-w-5xl mx-auto">
-  <img
-    src="/mathetes logo.png"
-    alt="Mathetes Fellowship"
-    className="mx-auto mb-8 h-16 sm:h-20 lg:h-24 xl:h-28 w-auto"
-  />
+      <imgage
+          src="/mathetes logo.png"
+          alt="Mathetes Fellowship"
+          className="mx-auto mb-8 h-auto w-full max-w-[240px] sm:max-w-[320px] md:max-w-[400px] lg:max-w-[480px]"
+        />
 
-  <h1 className="font-display text-3xl mb-4 text-center">Mathetes</h1>
-  <h3 className="font-display text-xl mb-4 text-center">"The way to Jesus"</h3>
+  <h1 className="font-['Copperplate',_serif] font-bold text-3xl mb-4 text-center">Mathetes</h1>
+<h3 className="font-['Copperplate',_serif] font-bold text-xl mb-4 text-center">&quot; The way to Jesus &quot;</h3>
   {/* ...rest stays the same */}
-      <div className="text-[#231F1E]/80 leading-relaxed mb-10 max-w-2xl space-y-4">
+     <div className="mx-auto text-[#231F1E]/80 leading-relaxed mb-10 max-w-2xl space-y-4 text-justify">
         <p>
           The Mathetes Fellowship is a Youth Ministry initiative that bridges
           the gap between Sunday School and Youth Ministry, nurturing spiritual
