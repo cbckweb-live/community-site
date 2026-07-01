@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@supabase/supabase-js";
 import { getYouTubeEmbedUrl } from "@/lib/utils";
-import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "The Living Room | Youth Forum",
@@ -42,7 +41,14 @@ export default async function LivingRoomPage() {
   }
 
   if (!episodes || episodes.length === 0) {
-    notFound(); // Creates proper 404 page
+    return (
+      <main className="px-4 sm:px-8 py-12 max-w-6xl mx-auto">
+        <h1 className="font-display text-3xl text-[#6B1F2A] mb-6">
+          The Living Room
+        </h1>
+        <p className="text-[#231F1E]">No episodes available yet.</p>
+      </main>
+    );
   }
 
   return (
