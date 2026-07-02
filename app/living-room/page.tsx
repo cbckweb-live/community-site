@@ -71,9 +71,9 @@ export default async function LivingRoomPage() {
             alt="The Living Room logo"
             width={240}
             height={96}
-            className="h-16 w-auto"
+            className="h-[68px] w-auto"
           />
-          <h1 className="font-display text-3xl text-[#6B1F2A]">
+          <h1 className="font-display text-[2rem] text-[#6B1F2A]">
             The Living Room
           </h1>
         </div>
@@ -91,9 +91,9 @@ export default async function LivingRoomPage() {
             alt="The Living Room logo"
             width={240}
             height={96}
-            className="h-16 w-auto"
+            className="h-[68px] w-auto"
           />
-          <h1 className="font-display text-3xl text-[#6B1F2A]">
+          <h1 className="font-display text-[2rem] text-[#6B1F2A]">
             The Living Room
           </h1>
         </div>
@@ -110,9 +110,9 @@ export default async function LivingRoomPage() {
           alt="The Living Room logo"
           width={240}
           height={96}
-          className="h-16 w-auto"
+          className="h-[68px] w-auto"
         />
-        <h1 className="font-display text-3xl text-[#6B1F2A]">
+        <h1 className="font-display text-[2rem] text-[#6B1F2A]">
           The Living Room
         </h1>
       </div>
