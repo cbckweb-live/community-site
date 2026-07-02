@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { decodeHtmlEntities } from "@/lib/utils";
+import SharePostButtons from "@/components/SharePostButtons";
+import { headers } from "next/headers";
 
 export default async function PostDetailPage({
   params,
@@ -10,6 +12,10 @@ export default async function PostDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const headerList = await headers();
+  const host = headerList.get("x-forwarded-host") ?? headerList.get("host");
+  const protocol = headerList.get("x-forwarded-proto") ?? "https";
+  const baseUrl = host ? `${protocol}://${host}` : "";
 
   const { data: post } = await supabase
     .from("posts")
@@ -66,6 +72,8 @@ export default async function PostDetailPage({
         className="prose prose-sm sm:prose max-w-none text-[#231F1E] prose-headings:font-display prose-a:text-[#6B1F2A]"
         dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(post.content) }}
       />
+
+      <SharePostButtons title={post.title} url={`${baseUrl}/about/blog-news/${post.slug}`} />
 
       {post.pdf_url && (
         <div className="mt-10 p-4 border border-[#231F1E]/10 rounded-xl flex items-center justify-between">

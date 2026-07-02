@@ -1,8 +1,18 @@
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
+import SharePostButtons from "@/components/SharePostButtons";
+import { headers } from "next/headers";
 
 export const revalidate = 0;
+
+async function getBaseUrl() {
+  const headerList = await headers();
+  const host = headerList.get("x-forwarded-host") ?? headerList.get("host");
+  const protocol = headerList.get("x-forwarded-proto") ?? "https";
+
+  return host ? `${protocol}://${host}` : "";
+}
 
 type Post = {
   id: string;
@@ -35,6 +45,7 @@ export default async function BlogNewsPage({
 
   const { data: posts, error } = await query;
   const postList = (posts as Post[]) || [];
+  const baseUrl = await getBaseUrl();
 
   return (
     <main className="px-4 sm:px-8 py-12 sm:py-16 max-w-5xl mx-auto">
@@ -71,45 +82,54 @@ export default async function BlogNewsPage({
 
       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
         {postList.map((post) => (
-          <Link
+          <div
             key={post.id}
-            href={`/about/blog-news/${post.slug}`}
             className="group bg-white shadow-md rounded-2xl overflow-hidden hover:shadow-lg transition-shadow"
           >
-            {post.photo_url && (
-              <div className="relative h-44">
-                <Image
-                  src={post.photo_url}
-                  alt={post.title}
-                  fill
-                  sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 33vw"
-                  style={{ objectFit: "cover" }}
-                  quality={100}
-                />
-              </div>
-            )}
-            <div className="p-5">
-              <p className="text-xs uppercase tracking-widest text-[#6B1F2A] mb-2">
-                {post.category === "news" ? "News" : "Blog & Opinion"}
-              </p>
-              <h2 className="font-display text-lg leading-snug mb-2 group-hover:text-[#6B1F2A] transition-colors">
-                {post.title}
-              </h2>
-              <div
-                className="text-sm text-[#231F1E]/60 line-clamp-3"
-                dangerouslySetInnerHTML={{
-                  __html: post.content.replace(/<[^>]+>/g, " ").slice(0, 120) + "...",
-                }}
-              />
-              <div className="mt-4 flex items-center justify-between text-xs text-[#231F1E]/40">
-                {post.author_name && <span>{post.author_name}</span>}
-                <span>{new Date(post.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</span>
-              </div>
-              {post.pdf_url && (
-                <p className="mt-3 text-xs text-[#6B1F2A]">📄 PDF attached</p>
+            <Link href={`/about/blog-news/${post.slug}`} className="block">
+              {post.photo_url && (
+                <div className="relative h-44">
+                  <Image
+                    src={post.photo_url}
+                    alt={post.title}
+                    fill
+                    sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 33vw"
+                    style={{ objectFit: "cover" }}
+                    quality={100}
+                  />
+                </div>
               )}
+              <div className="p-5">
+                <p className="text-xs uppercase tracking-widest text-[#6B1F2A] mb-2">
+                  {post.category === "news" ? "News" : "Blog & Opinion"}
+                </p>
+                <h2 className="font-display text-lg leading-snug mb-2 group-hover:text-[#6B1F2A] transition-colors">
+                  {post.title}
+                </h2>
+                <div
+                  className="text-sm text-[#231F1E]/60 line-clamp-3"
+                  dangerouslySetInnerHTML={{
+                    __html: post.content.replace(/<[^>]+>/g, " ").slice(0, 120) + "...",
+                  }}
+                />
+                <div className="mt-4 flex items-center justify-between text-xs text-[#231F1E]/40">
+                  {post.author_name && <span>{post.author_name}</span>}
+                  <span>{new Date(post.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</span>
+                </div>
+                {post.pdf_url && (
+                  <p className="mt-3 text-xs text-[#6B1F2A]">📄 PDF attached</p>
+                )}
+              </div>
+            </Link>
+
+            <div className="px-5 pb-5">
+              <SharePostButtons
+                title={post.title}
+                url={`${baseUrl}/about/blog-news/${post.slug}`}
+                compact
+              />
             </div>
-          </Link>
+          </div>
         ))}
       </div>
     </main>
