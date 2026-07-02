@@ -1,17 +1,32 @@
 export function getYouTubeEmbedUrl(url: string): string | null {
   if (!url) return null;
   try {
-    const parsed = new URL(url);
+    const trimmed = url.trim();
+    const normalizedUrl = /^https?:\/\//i.test(trimmed)
+      ? trimmed
+      : `https://${trimmed}`;
+    const parsed = new URL(normalizedUrl);
     let videoId: string | null = null;
-    if (parsed.hostname.includes("youtube.com")) {
+    const hostname = parsed.hostname.replace(/^www\./, "");
+
+    if (hostname === "youtu.be") {
+      videoId = parsed.pathname.split("/").filter(Boolean)[0] || null;
+    } else if (hostname.endsWith("youtube.com") || hostname.endsWith("youtube-nocookie.com")) {
       videoId = parsed.searchParams.get("v");
+
+      if (!videoId) {
+        const segments = parsed.pathname.split("/").filter(Boolean);
+        const supportedPaths = new Set(["embed", "shorts", "live", "v"]);
+        if (segments.length >= 2 && supportedPaths.has(segments[0])) {
+          videoId = segments[1] || null;
+        }
+      }
     }
-    if (parsed.hostname === "youtu.be") {
-      videoId = parsed.pathname.slice(1);
+
+    if (parsed.pathname.includes("/embed/") && videoId) {
+      return `https://www.youtube.com/embed/${videoId}`;
     }
-    if (parsed.pathname.includes("/embed/")) {
-      return url;
-    }
+
     return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
   } catch {
     return null;
