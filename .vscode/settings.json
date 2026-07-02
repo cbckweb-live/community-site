@@ -1,4 +1,8 @@
 {
-    "snyk.advanced.organization": "1fe95b37-5318-4c51-a84a-1091a2afea5a",
-    "snyk.advanced.autoSelectOrganization": true
+  "snyk.advanced.organization": "1fe95b37-5318-4c51-a84a-1091a2afea5a",
+  "snyk.advanced.autoSelectOrganization": true,
+  "snyk.excludeFolders": [
+    "**/.kilo/**"
+  ]
 }
+

@@ -17,6 +17,37 @@ interface Episode {
   display_order: number;
 }
 
+function toRomanNumeral(num: number): string {
+  const n = Math.max(1, Math.floor(num));
+  const romans: Array<[number, string]> = [
+    [1000, "M"],
+    [900, "CM"],
+    [500, "D"],
+    [400, "CD"],
+    [100, "C"],
+    [90, "XC"],
+    [50, "L"],
+    [40, "XL"],
+    [10, "X"],
+    [9, "IX"],
+    [5, "V"],
+    [4, "IV"],
+    [1, "I"],
+  ];
+
+  let remaining = n;
+  let result = "";
+
+  for (const [value, symbol] of romans) {
+    while (remaining >= value) {
+      result += symbol;
+      remaining -= value;
+    }
+  }
+
+  return result;
+}
+
 export default async function LivingRoomPage() {
   // Create client inside the async function
   const supabase = createClient(
@@ -67,6 +98,9 @@ export default async function LivingRoomPage() {
               <div className="grid grid-cols-10 gap-8 items-center">
                 {/* Left Side - Content */}
                 <div className="col-span-10 md:col-span-6 bg-white/40 backdrop-blur-sm border border-white/50 shadow-md rounded-xl p-6">
+                  <p className="text-xs text-[#231F1E]/50 mb-2">
+                    Episode {toRomanNumeral(episode.display_order)}
+                  </p>
                   <h2 className="font-display text-2xl text-[#6B1F2A] mb-3">
                     {episode.title}
                   </h2>

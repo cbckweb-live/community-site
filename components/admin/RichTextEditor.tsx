@@ -35,7 +35,7 @@ export default function RichTextEditor({ value, onChange }: Props) {
 
     const currentHtml = editor.getHTML();
     if (currentHtml !== normalizedValue) {
-      editor.commands.setContent(normalizedValue, false);
+      editor.commands.setContent(normalizedValue, { emitUpdate: false });
     }
   }, [editor, normalizedValue]);
 
