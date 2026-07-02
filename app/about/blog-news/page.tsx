@@ -126,7 +126,6 @@ export default async function BlogNewsPage({
               <SharePostButtons
                 title={post.title}
                 url={`${baseUrl}/about/blog-news/${post.slug}`}
-                compact
               />
             </div>
           </div>
