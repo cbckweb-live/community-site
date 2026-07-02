@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getYouTubeEmbedUrl } from "@/lib/utils";
 import { createClient } from "@supabase/supabase-js";
 
@@ -64,9 +65,18 @@ export default async function LivingRoomPage() {
     console.error("Failed to fetch episodes:", error);
     return (
       <main className="px-4 sm:px-8 py-12 max-w-6xl mx-auto">
-        <h1 className="font-display text-3xl text-[#6B1F2A] mb-6">
-          The Living Room
-        </h1>
+        <div className="mb-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+          <Image
+            src="/livingroom.png"
+            alt="The Living Room logo"
+            width={240}
+            height={96}
+            className="h-16 w-auto"
+          />
+          <h1 className="font-display text-3xl text-[#6B1F2A]">
+            The Living Room
+          </h1>
+        </div>
         <p className="text-[#231F1E]">Unable to load episodes at this time.</p>
       </main>
     );
@@ -75,9 +85,18 @@ export default async function LivingRoomPage() {
   if (!episodes || episodes.length === 0) {
     return (
       <main className="px-4 sm:px-8 py-12 max-w-6xl mx-auto">
-        <h1 className="font-display text-3xl text-[#6B1F2A] mb-6">
-          The Living Room
-        </h1>
+        <div className="mb-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+          <Image
+            src="/livingroom.png"
+            alt="The Living Room logo"
+            width={240}
+            height={96}
+            className="h-16 w-auto"
+          />
+          <h1 className="font-display text-3xl text-[#6B1F2A]">
+            The Living Room
+          </h1>
+        </div>
         <p className="text-[#231F1E]">No episodes available yet.</p>
       </main>
     );
@@ -85,25 +104,39 @@ export default async function LivingRoomPage() {
 
   return (
     <main className="px-4 sm:px-8 py-12 max-w-6xl mx-auto">
-      <h1 className="font-display text-3xl text-[#6B1F2A] mb-12">
-        The Living Room
-      </h1>
+      <div className="mb-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+        <Image
+          src="/livingroom.png"
+          alt="The Living Room logo"
+          width={240}
+          height={96}
+          className="h-16 w-auto"
+        />
+        <h1 className="font-display text-3xl text-[#6B1F2A]">
+          The Living Room
+        </h1>
+      </div>
 
       <div className="space-y-12">
-        {episodes.map((episode: Episode, index: number) => {
+        {episodes.map((episode: Episode) => {
           const embedUrl = getYouTubeEmbedUrl(episode.youtube_url || "");
 
           return (
-            <div key={episode.id}>
-              <div className="grid grid-cols-1 md:grid-cols-10 gap-8 items-start">
-                {/* Left Side - Content */}
-                <div className="md:col-span-6 bg-white/40 backdrop-blur-sm border border-white/50 shadow-md rounded-xl p-6">
-                  <p className="text-xs text-[#231F1E]/50 mb-2">
-                    Episode {toRomanNumeral(episode.display_order)}
-                  </p>
-                  <h2 className="font-display text-2xl text-[#6B1F2A] mb-3">
-                    {episode.title}
-                  </h2>
+            <div
+              key={episode.id}
+              className="bg-white/40 backdrop-blur-sm border border-white/50 shadow-md rounded-2xl p-6 sm:p-8"
+            >
+              <div className="mb-6 flex flex-col gap-2">
+                <p className="text-xs text-[#231F1E]/50">
+                  Episode {toRomanNumeral(episode.display_order)}
+                </p>
+                <h2 className="font-display text-2xl text-[#6B1F2A]">
+                  {episode.title}
+                </h2>
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,480px)] lg:items-start">
+                <div className="space-y-4">
                   {episode.description && (
                     <p className="text-[#231F1E] font-body leading-relaxed">
                       {episode.description}
@@ -111,8 +144,7 @@ export default async function LivingRoomPage() {
                   )}
                 </div>
 
-                {/* Right Side - Video */}
-                <div className="md:col-span-4 w-full">
+                <div className="w-full">
                   {embedUrl ? (
                     <div className="aspect-video rounded-xl overflow-hidden shadow-md">
                       <iframe
@@ -130,10 +162,6 @@ export default async function LivingRoomPage() {
                   )}
                 </div>
               </div>
-
-              {index < episodes.length - 1 && (
-                <hr className="border-white/20 my-8" />
-              )}
             </div>
           );
         })}
