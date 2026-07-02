@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Heading from "@tiptap/extension-heading";
+import { decodeHtmlEntities } from "@/lib/utils";
 
 type Props = {
   value: string;
@@ -11,13 +13,15 @@ type Props = {
 };
 
 export default function RichTextEditor({ value, onChange }: Props) {
+  const normalizedValue = decodeHtmlEntities(value);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ heading: false }),
       Underline,
       Heading.configure({ levels: [2, 3] }),
     ],
-    content: value,
+    content: normalizedValue,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: {
       attributes: {
@@ -25,6 +29,15 @@ export default function RichTextEditor({ value, onChange }: Props) {
       },
     },
   });
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const currentHtml = editor.getHTML();
+    if (currentHtml !== normalizedValue) {
+      editor.commands.setContent(normalizedValue, false);
+    }
+  }, [editor, normalizedValue]);
 
   if (!editor) return null;
 

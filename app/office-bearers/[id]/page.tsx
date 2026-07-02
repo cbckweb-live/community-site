@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
+import { decodeHtmlEntities } from "@/lib/utils";
 
 export default async function OfficeBearerDetailPage({
   params,
@@ -33,9 +34,16 @@ export default async function OfficeBearerDetailPage({
       <p className="text-[#6B1F2A] uppercase tracking-wide mb-6">
         {person.role}
       </p>
-      <p className="text-[#231F1E]/80 leading-relaxed text-justify">
-        {person.bio || "Their story will be added here soon."}
-      </p>
+      {person.bio ? (
+        <div
+          className="prose prose-sm max-w-none text-[#231F1E]/80 prose-headings:font-display prose-a:text-[#6B1F2A] text-left"
+          dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(person.bio) }}
+        />
+      ) : (
+        <p className="text-[#231F1E]/80 leading-relaxed text-justify">
+          Their story will be added here soon.
+        </p>
+      )}
     </main>
   );
 }
